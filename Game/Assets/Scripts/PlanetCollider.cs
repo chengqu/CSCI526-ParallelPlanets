@@ -14,22 +14,34 @@ public class PlanetCollider : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		if (!vPlanetList.Contains(col.gameObject))
+		if (!vPlanetList.Contains (col.gameObject)) {
 			//make sure it's the player
-		if (col.tag == "Planet")
-		{
-			//add this planet
-			vPlanetList.Add (col.gameObject);
+			if (col.tag == "PlanetScale") {
+				//add this planet
+				foreach (Transform child in col.gameObject.transform) {
+					Debug.Log ("2");
+					if (child.gameObject.tag == "Planet") {
+						Debug.Log ("1");
+						vPlanetList.Add (child.gameObject);
+					}
+				}
+			}
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D col)
 	{
 		//make sure it's the player
-		if (col.tag == "Planet")
+		if (col.tag == "PlanetScale")
 		{
 			//remove this planet
-			vPlanetList.Remove (col.gameObject);
+			foreach (Transform child in col.gameObject.transform) {
+				Debug.Log ("2exit");
+				if (child.gameObject.tag == "Planet") {
+					Debug.Log ("1exit");
+					vPlanetList.Remove (child.gameObject);
+				}
+			}
 		}
 	}
 }

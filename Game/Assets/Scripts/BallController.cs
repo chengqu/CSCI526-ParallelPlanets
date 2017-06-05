@@ -6,17 +6,18 @@ public class BallController : MonoBehaviour {
 	public enum Walk_Direction {Right, Left};
 	public float vJumpHeight = 2f;
 	public bool vCanMove = true;
-	public float vCenterDist;
-	public float vLeftDist;
-	public float vRightDist;
+
 	public float vDistanceGround = 2f;
-	public float vJumpSpeed = 2f;
+	public float vJumpSpeed = 4f;
 	public Quaternion rotation;
 	public float speed = 0.6f;
-	public float vWalkSpeed = 2f;
+	public float vWalkSpeed = 4f;
 	public float JumpForce = 400f;
 	public bool CanWalkOnPlateform = false;		
 
+	private float vCenterDist;
+	private float vLeftDist;
+	private float vRightDist;
 	private GameObject vCurPlanet;
 	private bool IsJumping = false;
 	private Rigidbody2D myRigidBody;
@@ -247,9 +248,9 @@ public class BallController : MonoBehaviour {
 				IsJumping = false;
 				IsReadyToChange = false;
 			}
-//			myRigidBody.AddForce(transform.up * 500f);
-//			IsJumping = false;
-//			IsReadyToChange = false;
+			//			myRigidBody.AddForce(transform.up * 500f);
+			//			IsJumping = false;
+			//			IsReadyToChange = false;
 		} else if (!CanJump && Input.GetAxis ("Vertical") == 0) {
 			CanJump = true;
 		}
