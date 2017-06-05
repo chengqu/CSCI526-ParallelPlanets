@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour {
 	public enum Walk_Direction {Right, Left};
-	public float vJumpHeight = 2f;
+	public float vJumpHeight = 1f;
 	public bool vCanMove = true;
 	public float vCenterDist;
 	public float vLeftDist;
 	public float vRightDist;
 	public float vDistanceGround = 2f;
-	public float vJumpSpeed = 2f;
+	public float vJumpSpeed = 3f;
 	public Quaternion rotation;
 	public float speed = 0.6f;
 	public float vWalkSpeed = 2f;
