@@ -16,9 +16,18 @@ public class BunnyController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetButtonUp ("Jump")) {
-			myRigidBody.AddForce (transform.up * bunnyJumpForce);
+			if (myRigidBody.gravityScale < 0) {
+				myRigidBody.AddForce (-transform.up * bunnyJumpForce);
+			}
+			if (myRigidBody.gravityScale > 0) {
+				myRigidBody.AddForce (transform.up * bunnyJumpForce);
+			}
 		}
-		myAnimator.SetFloat ("vVelocity", myRigidBody.velocity.y);
+		if (transform.position.y > 0) {
+			myRigidBody.gravityScale = -3;
+		} else {
+			myRigidBody.gravityScale = 3;
+		}
 	}
 
 	void OnCollisionEnter2D(Collision2D other) {
