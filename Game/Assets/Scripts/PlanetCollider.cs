@@ -15,15 +15,6 @@ public class PlanetCollider : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		Debug.Log("1");
-
-//		if (!vPlanetList.Contains(col.gameObject))
-//			//make sure it's the player
-//		if (col.tag == "Planet")
-//		{
-//			//add this planet
-//			vPlanetList.Add (col.gameObject);
-//		}
-			//make sure it's the player
 		if (col.tag == "PlanetScale")
 		{
 			//add this planet

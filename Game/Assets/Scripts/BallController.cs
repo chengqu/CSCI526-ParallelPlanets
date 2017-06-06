@@ -33,7 +33,7 @@ public class BallController : MonoBehaviour {
 	private bool IsWalking;
 	private bool IsReadyToChange = false;
 
-	private GameObject vCurPlanet;
+	public GameObject vCurPlanet;
 	private GameObject vLeftObj, vRightObj;
 
 	private GameObject vCircleCollider;
@@ -136,6 +136,16 @@ public class BallController : MonoBehaviour {
 
 	}
 
+	private GameObject OwnPlanet;
+	void FindOwnPlanet () {
+		if (transform.tag == "PlanetScale") {
+			foreach (Transform child in transform) {
+				if (child.gameObject.tag == "Planet")
+					OwnPlanet = child.gameObject;
+			}
+		}
+	}
+
 	void keepItDownDirectionPointToPlanet() {
 		Vector3 fwd = (Vector2)vLeftObj.transform.TransformDirection(-Vector3.up);
 
@@ -152,7 +162,17 @@ public class BallController : MonoBehaviour {
 		//get the first planet in range and make it's own
 		if (vCurPlanet == null) {
 			foreach (RaycastHit2D hit in hitAlll) {
-				if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
+				//for planet
+				if (transform.tag == "PlanetScale") {
+					FindOwnPlanet ();
+					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject
+						&& hit.transform.gameObject != OwnPlanet) {
+						vCurPlanet = hit.transform.gameObject;
+					}
+				}
+				//for player
+				else if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
+					
 					vCurPlanet = hit.transform.gameObject;
 			}
 		}
