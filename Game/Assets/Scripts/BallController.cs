@@ -3,27 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BallController : MonoBehaviour {
+	
 	public enum Walk_Direction {Right, Left};
+
 	public float vJumpHeight = 1f;
-	public bool vCanMove = true;
-	public float vCenterDist;
-	public float vLeftDist;
-	public float vRightDist;
-	public float vDistanceGround = 2f;
 	public float vJumpSpeed = 3f;
-	public Quaternion rotation;
-	public float speed = 0.6f;
+	public float vDistanceGround = 2f;
 	public float vWalkSpeed = 2f;
-	public float JumpForce = 400f;
+
+	public bool vCanMove = true;
 	public bool CanWalkOnPlateform = false;		
+	public bool IsAutoWalking = false;
+	public bool IsPlayer = true;
+	public bool CanJump = true;
+	public bool CanJumpOnOtherPlanets = true;
+
+	public Walk_Direction WalkingDirection = Walk_Direction.Right;
+
+	private Vector3 pos;
+	private Quaternion rotation;
+
+	private float vCenterDist;
+	private float vLeftDist;
+	private float vRightDist;
+	private float vRotateSpeed = 10f;
+	private float vElapsedHeight = 0f;
+
+	private bool IsJumping = false;
+	private bool IsWalking;
+	private bool IsReadyToChange = false;
 
 	private GameObject vCurPlanet;
-	private bool IsJumping = false;
-	private Rigidbody2D myRigidBody;
-	private float vRotateSpeed = 10f;	
 	private GameObject vLeftObj, vRightObj;
+
+	private Rigidbody2D myRigidBody;
 	private SpriteRenderer myRenderer;
 	private PlanetCollider vPlanetCollider;
+
 	// Use this for initialization
 	void Start () {
 		myRigidBody = GetComponent<Rigidbody2D> ();
@@ -59,15 +75,7 @@ public class BallController : MonoBehaviour {
 		}
 	}
 
-	private Vector3 pos;
-	public bool IsAutoWalking = false;
-	public bool IsPlayer = true;
-	public bool CanJump = true;
-	private bool IsWalking;
-	public Walk_Direction WalkingDirection = Walk_Direction.Right;
-	private float vElapsedHeight = 0f;
-	private bool IsReadyToChange = false;
-	public bool CanJumpOnOtherPlanets = true;	
+
 	// Update is called once per frame
 	void Update () {
 		//check if this character can move freely or it's disabled
@@ -86,7 +94,7 @@ public class BallController : MonoBehaviour {
 				WalkingDirection = Walk_Direction.Left;
 			}
 
-//			//check if JUMP
+			//check if JUMP
 			if (IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
 				IsJumping = true;
 				CanJump = false;
@@ -119,25 +127,6 @@ public class BallController : MonoBehaviour {
 
 
 		}
-	}
-	
-	void CheckIfNearbyPlanet()
-	{
-		bool vFound = false;
-
-		foreach (GameObject vPlanet in vPlanetCollider.vPlanetList)
-			//Debug.Log (vPlanetCollider);
-			if (vPlanet != vCurPlanet && !vFound && vPlanet != transform.gameObject) {
-				Debug.Log ("in");
-				//we found a planet. we transfert to the first one not in the range.
-				vFound = true;
-				IsReadyToChange = false; //cannot change planet without making another jump. Prevent the character to be stuck between 2 planets
-				//change the planet
-				vCurPlanet = vPlanet;
-
-				//make sure the character scale isn't changed between planets
-				transform.parent = vCurPlanet.transform;
-			}
 	}
 
 	void FixedUpdate () {
@@ -259,6 +248,26 @@ public class BallController : MonoBehaviour {
 		}
 
 	}
+
+	void CheckIfNearbyPlanet()
+	{
+		bool vFound = false;
+
+		foreach (GameObject vPlanet in vPlanetCollider.vPlanetList)
+			//Debug.Log (vPlanetCollider);
+			if (vPlanet != vCurPlanet && !vFound && vPlanet != transform.gameObject) {
+				//Debug.Log ("in");
+				//we found a planet. we transfert to the first one not in the range.
+				vFound = true;
+				IsReadyToChange = false; //cannot change planet without making another jump. Prevent the character to be stuck between 2 planets
+				//change the planet
+				vCurPlanet = vPlanet;
+
+				//make sure the character scale isn't changed between planets
+				transform.parent = vCurPlanet.transform;
+			}
+	}
+
 	void RotateObj(string vDirection)
 	{
 		//initialise variable
@@ -278,42 +287,28 @@ public class BallController : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(temp);
 	}
 
-	void MoveRight () {
-		Vector3 position = transform.position;
-		position += (vLeftObj.transform.position - myRenderer.bounds.center) * vWalkSpeed * Time.deltaTime;
-		transform.position = position;
-	}
-	void MoveLeft () {
-		Vector2 position = transform.position;
-		position.x -= speed;
-		transform.position = position;
-	}
-	void MoveUp () {
-		Vector2 position = transform.position;
-		position.y += speed;
-		transform.position = position;
-	}
-	void MoveDown () {
-		Vector2 position = transform.position;
-		position.y -= speed;
-		transform.position = position;
-	}
+//	void MoveRight () {
+//		Vector3 position = transform.position;
+//		position += (vLeftObj.transform.position - myRenderer.bounds.center) * vWalkSpeed * Time.deltaTime;
+//		transform.position = position;
+//	}
+//	void MoveLeft () {
+//		Vector2 position = transform.position;
+//		position.x -= speed;
+//		transform.position = position;
+//	}
+//	void MoveUp () {
+//		Vector2 position = transform.position;
+//		position.y += speed;
+//		transform.position = position;
+//	}
+//	void MoveDown () {
+//		Vector2 position = transform.position;
+//		position.y -= speed;
+//		transform.position = position;
+//	}
+
 	void OnCollisionEnter2D(Collision2D col) {
-		if (col.gameObject.tag == "Left") {
-			Physics2D.gravity = new Vector2 (-9.8f, 0f);
-			myRigidBody.MoveRotation (-90f);
-		}
-		if (col.gameObject.tag == "Bottom") {
-			Physics2D.gravity = new Vector2 (0f, -9.8f);
-			myRigidBody.MoveRotation (0f);
-		}
-		if (col.gameObject.tag == "Right") {
-			Physics2D.gravity = new Vector2 (9.8f, 0f);
-			myRigidBody.MoveRotation (90f);
-		}
-		if (col.gameObject.tag == "Top") {
-			Physics2D.gravity = new Vector2 (0f, 9.8f);
-			myRigidBody.MoveRotation (180f);
-		}
+
 	}
 }
