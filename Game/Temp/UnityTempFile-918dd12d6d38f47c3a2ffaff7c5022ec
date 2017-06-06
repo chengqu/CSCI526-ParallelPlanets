@@ -91,6 +91,7 @@
 'Assets/Scripts/INITIAL/MoveToLeft.cs'
 'Assets/Scripts/INITIAL/PrefabSpawner.cs'
 'Assets/Scripts/PlanetCollider.cs'
+'Assets/Scripts/PlayerController.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Xml.Linq.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/UnityScript.dll'

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallController : MonoBehaviour {
-	
+public class PlayerController : MonoBehaviour {
+
 	public enum Walk_Direction {Right, Left};
+	public List<GameObject> vPlanetList;
 
 	public float vJumpHeight = 1f;
 	public float vJumpSpeed = 3f;
@@ -39,11 +40,13 @@ public class BallController : MonoBehaviour {
 	private GameObject vCircleCollider;
 	private Rigidbody2D myRigidBody;
 	private SpriteRenderer myRenderer;
-	private PlanetCollider vPlanetCollider;
+	//private PlanetCollider vPlanetCollider;
 
 	// Use this for initialization
 	void Start () {
-		
+		//initialise list 
+		vPlanetList = new List<GameObject> ();
+
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		vCurPlanet = null;
@@ -67,21 +70,20 @@ public class BallController : MonoBehaviour {
 		//then rotate to the original rotation
 		transform.rotation = Quaternion.Euler(vOriginalRotation);
 
-		if (CanJumpOnOtherPlanets) {
-			IsReadyToChange = false;
-			vCircleCollider = Instantiate(Resources.Load("CircleCollider") as GameObject);
-			vCircleCollider.transform.parent = transform;
-			vCircleCollider.transform.localPosition = new Vector3 (0f, 0f, 0f);
-			vPlanetCollider = vCircleCollider.GetComponent<PlanetCollider> ();
-			//vCircleCollider.hideFlags = HideFlags.HideInHierarchy;
-
-		}
+//		if (CanJumpOnOtherPlanets) {
+//			IsReadyToChange = false;
+//			vCircleCollider = Instantiate(Resources.Load("CircleCollider") as GameObject);
+//			vCircleCollider.transform.parent = transform;
+//			vCircleCollider.transform.localPosition = new Vector3 (0f, 0f, 0f);
+//			vPlanetCollider = vCircleCollider.GetComponent<PlanetCollider> ();
+//			//vCircleCollider.hideFlags = HideFlags.HideInHierarchy;
+//		}
 	}
 
 
 	// Update is called once per frame
 	void Update () {
-		
+
 		//check if this character can move freely or it's disabled
 		if (vCanMove) {
 			pos = Vector3.zero;
@@ -105,6 +107,9 @@ public class BallController : MonoBehaviour {
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
 
+				//check if there is a nearby planet if JUMP and CAN change planets is activated
+				if (CanJumpOnOtherPlanets)
+					CheckIfNearbyPlanet ();
 			}
 
 			//check if the character is walking
@@ -117,13 +122,13 @@ public class BallController : MonoBehaviour {
 			if (IsWalking) {
 				//move
 				transform.Translate (pos);
-//
-//				//increase time
-//				elapseanimation += Time.deltaTime;
-//				if (elapseanimation >= animationSpeed) {
-//					UpdateCharacterAnimation ();
-//					elapseanimation = 0f;
-//				}
+				//
+				//				//increase time
+				//				elapseanimation += Time.deltaTime;
+				//				if (elapseanimation >= animationSpeed) {
+				//					UpdateCharacterAnimation ();
+				//					elapseanimation = 0f;
+				//				}
 			}
 
 
@@ -161,7 +166,7 @@ public class BallController : MonoBehaviour {
 			if (vCurPlanet == hit.transform.gameObject) {
 				Debug.DrawRay (vlpos, (Vector3)hit.point - vlpos, Color.blue);	
 				vLeftDist = Vector3.Distance (vlpos, (Vector3)hit.point);
-			//	Debug.Log (vLeftDist);
+				//	Debug.Log (vLeftDist);
 			}
 		}
 
@@ -237,12 +242,9 @@ public class BallController : MonoBehaviour {
 				IsJumping = false;
 				IsReadyToChange = false;
 			}
-			//check if there is a nearby planet if JUMP and CAN change planets is activated
-			if (CanJumpOnOtherPlanets)
-				CheckIfNearbyPlanet ();
-//			myRigidBody.AddForce(transform.up * 500f);
-//			IsJumping = false;
-//			IsReadyToChange = false;
+			//			myRigidBody.AddForce(transform.up * 500f);
+			//			IsJumping = false;
+			//			IsReadyToChange = false;
 		} else if (!CanJump && Input.GetAxis ("Vertical") == 0) {
 			CanJump = true;
 		}
@@ -257,7 +259,7 @@ public class BallController : MonoBehaviour {
 	{
 		bool vFound = false;
 
-		foreach (GameObject vPlanet in vPlanetCollider.vPlanetList)
+		foreach (GameObject vPlanet in vPlanetList)
 			//Debug.Log (vPlanetCollider);
 			if (vPlanet != vCurPlanet && !vFound && vPlanet != transform.gameObject) {
 				//Debug.Log ("in");
@@ -290,28 +292,36 @@ public class BallController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
+		
+	void OnTriggerEnter2D(Collider2D col)
+	{
+		Debug.Log("1");
+		if (col.tag == "PlanetScale")
+		{
+			//add this planet
+			foreach (Transform child in col.gameObject.transform) {
+				if (child.gameObject.tag == "Planet" && !vPlanetList.Contains (child.gameObject)) {
+					vPlanetList.Add (child.gameObject);
+					Debug.Log("collider");
+				}
+			}	
+		}
+	}
 
-//	void MoveRight () {
-//		Vector3 position = transform.position;
-//		position += (vLeftObj.transform.position - myRenderer.bounds.center) * vWalkSpeed * Time.deltaTime;
-//		transform.position = position;
-//	}
-//	void MoveLeft () {
-//		Vector2 position = transform.position;
-//		position.x -= speed;
-//		transform.position = position;
-//	}
-//	void MoveUp () {
-//		Vector2 position = transform.position;
-//		position.y += speed;
-//		transform.position = position;
-//	}
-//	void MoveDown () {
-//		Vector2 position = transform.position;
-//		position.y -= speed;
-//		transform.position = position;
-//	}
-
+	void OnTriggerExit2D(Collider2D col)
+	{
+		//make sure it's the player
+		if (col.tag == "PlanetScale")
+		{
+			//remove this planet
+			foreach (Transform child in col.gameObject.transform) {
+				if (child.gameObject.tag == "Planet") {
+					vPlanetList.Remove (child.gameObject);
+					Debug.Log("colliderExit");
+				}
+			}	
+		}
+	}
 	void OnCollisionEnter2D(Collision2D col) {
 
 	}
