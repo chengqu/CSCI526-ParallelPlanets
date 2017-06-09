@@ -232,7 +232,9 @@ public class PlayerController : MonoBehaviour {
 					vDiff *= -1;
 
 				//here we calculate how fast we must rotate the character
-				if (vDiff < 0.2f)
+			if (vDiff < 0.001)
+				vRotateSpeed = 1f;
+			else if (vDiff < 0.2f)
 					vRotateSpeed = 30f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
 			else if (vDiff >= 0.2f && vDiff < 0.4f)
 					vRotateSpeed = 80f;				//need to turn a little bit faster
