@@ -40,7 +40,7 @@ public class PG_Character : MonoBehaviour
 	private float animationSpeed = 0.1f;
 	private float elapseanimation = 0f;
 	private int vCurrentFrame = 0;
-	private GameObject vCurPlanet;
+	public GameObject vCurPlanet;
 	private bool IsJumping = false;
 	private bool CanJump = true;
 	private float vElapsedHeight = 0f;
@@ -343,6 +343,17 @@ public class PG_Character : MonoBehaviour
 			vRenderer.sprite = vCurAnimList[vCurrentFrame];
 	}
 
+
+	private GameObject OwnPlanet;
+	void FindOwnPlanet () {
+		if (transform.tag == "PlanetScale") {
+			foreach (Transform child in transform) {
+				if (child.gameObject.tag == "Planet")
+					OwnPlanet = child.gameObject;
+			}
+		}
+	}
+
 	void FixedUpdate ()
 	{
 		Vector3 fwd = (Vector2)vLeftObj.transform.TransformDirection(-Vector3.up);
@@ -360,7 +371,14 @@ public class PG_Character : MonoBehaviour
 		//get the first planet in range and make it's own
 		if (vCurPlanet == null) {
 			foreach (RaycastHit2D hit in hitAlll) {
-				if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
+				if (transform.tag == "PlanetScale"){
+					FindOwnPlanet ();
+					if (hit.transform.gameObject != OwnPlanet && hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject
+						) {
+						vCurPlanet = hit.transform.gameObject;
+					}
+				}
+				else if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
 					vCurPlanet = hit.transform.gameObject;
 			}
 		}

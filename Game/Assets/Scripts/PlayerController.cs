@@ -8,9 +8,9 @@ public class PlayerController : MonoBehaviour {
 	public List<GameObject> vPlanetList;
 
 	public float vJumpHeight = 1f;
-	public float vJumpSpeed = 3f;
+	public float vJumpSpeed = 6f;
 	public float vDistanceGround = 2f;
-	public float vWalkSpeed = 2f;
+	public float vWalkSpeed = 5f;
 
 	public bool vCanMove = true;
 	public bool CanWalkOnPlateform = false;		
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour {
 	private bool IsWalking;
 	private bool IsReadyToChange = false;
 
-	private GameObject vCurPlanet;
+	public GameObject vCurPlanet;
 	private GameObject vLeftObj, vRightObj;
 
 	private GameObject vCircleCollider;
@@ -44,8 +44,6 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		//initialise list 
-		vPlanetList = new List<GameObject> ();
 
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
@@ -70,13 +68,15 @@ public class PlayerController : MonoBehaviour {
 		//then rotate to the original rotation
 		transform.rotation = Quaternion.Euler(vOriginalRotation);
 
+		IsReadyToChange = false;
 //		if (CanJumpOnOtherPlanets) {
-//			IsReadyToChange = false;
+//			
 //			vCircleCollider = Instantiate(Resources.Load("CircleCollider") as GameObject);
 //			vCircleCollider.transform.parent = transform;
 //			vCircleCollider.transform.localPosition = new Vector3 (0f, 0f, 0f);
-//			vPlanetCollider = vCircleCollider.GetComponent<PlanetCollider> ();
+//			//vPlanetCollider = vCircleCollider.GetComponent<PlanetCollider> ();
 //			//vCircleCollider.hideFlags = HideFlags.HideInHierarchy;
+//
 //		}
 	}
 
@@ -107,9 +107,6 @@ public class PlayerController : MonoBehaviour {
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
 
-				//check if there is a nearby planet if JUMP and CAN change planets is activated
-				if (CanJumpOnOtherPlanets)
-					CheckIfNearbyPlanet ();
 			}
 
 			//check if the character is walking
@@ -135,10 +132,26 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
+	//public bool boundOnPlanet = true;
+
 	void FixedUpdate () {
+//		if (!boundOnPlanet) {
+//			vCurPlanet = null;
+//			myRigidBody.gravityScale = 1;
+//		} else {
+			keepItDownDirectionPointToPlanet ();
+		//}
+	}
 
-		keepItDownDirectionPointToPlanet ();
+	private GameObject OwnPlanet;
 
+	void FindOwnPlanet () {
+		if (transform.tag == "PlanetScale") {
+			foreach (Transform child in transform) {
+				if (child.gameObject.tag == "Planet")
+					OwnPlanet = child.gameObject;
+			}
+		}
 	}
 
 	void keepItDownDirectionPointToPlanet() {
@@ -155,115 +168,126 @@ public class PlayerController : MonoBehaviour {
 		RaycastHit2D[] hitAlll = Physics2D.RaycastAll(vlpos, (Vector2)(fwd));
 
 		//get the first planet in range and make it's own
-		if (vCurPlanet == null) {
-			foreach (RaycastHit2D hit in hitAlll) {
-				if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
-					vCurPlanet = hit.transform.gameObject;
-			}
-		}
-
-		foreach (RaycastHit2D hit in hitAlll){
-			if (vCurPlanet == hit.transform.gameObject) {
-				Debug.DrawRay (vlpos, (Vector3)hit.point - vlpos, Color.blue);	
-				vLeftDist = Vector3.Distance (vlpos, (Vector3)hit.point);
-				//	Debug.Log (vLeftDist);
-			}
-		}
-
-		Vector3 vrpos = vLeftObj.transform.position;
-
-		//right ray
-		RaycastHit2D[] hitAllr = Physics2D.RaycastAll(vrpos, (Vector2)(fwd));
-		foreach (RaycastHit2D hit in hitAllr)
-			if (vCurPlanet == hit.transform.gameObject) {
-				Debug.DrawRay (vrpos, (Vector3)hit.point-vrpos, Color.blue);	
-				vRightDist = Vector3.Distance(vrpos,(Vector3)hit.point);
-				//Debug.Log (vRightDist);
-			}
-
-		//center to be able to have some kind of gravity
-		RaycastHit2D[] hitAllc = Physics2D.RaycastAll(myRenderer.bounds.center, (Vector2)(fwd));
-		bool vFoundGround = false;
-		foreach (RaycastHit2D hit in hitAllc) {
-			if (vCurPlanet == hit.transform.gameObject || ((hit.transform.tag == "Plateform" || hit.transform.tag == "Pushable")&& CanWalkOnPlateform)) {
-				Debug.DrawRay (myRenderer.bounds.center, (Vector3)hit.point - transform.position, Color.blue);	
-				if (Vector3.Distance (myRenderer.bounds.center, (Vector3)hit.point) < vCenterDist || !vFoundGround) {
-					vCenterDist = Vector3.Distance (myRenderer.bounds.center, (Vector3)hit.point);
-					vFoundGround = true;
+	
+			if (vCurPlanet == null) {
+				foreach (RaycastHit2D hit in hitAlll) {
+					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
+						vCurPlanet = hit.transform.gameObject;
 				}
 			}
-		}
-		//check if the Left or Right Probe ARE inside the collider which mean they cannot know the distance. 
-		//So we just rotate them to get a distance
-		if (vLeftDist == 0f) vRightDist = 99f;
-		if (vRightDist == 0f) vLeftDist = 99f;
 
-		//make sure if we doesn't find anything below the character, make him rotate until we find the floor!
-		if (vLeftDist == 99f && vRightDist == 99f) {
-			vLeftDist = 0f;
-		}
-
-		//check if we rotate the character
-		if (vLeftDist != vRightDist) {
-
-			//check we rotate at which speed.
-			float vDiff = vLeftDist-vRightDist;
-			if (vDiff < 0)
-				vDiff *= -1;
-
-			//here we calculate how fast we must rotate the character
-			if (vDiff < 0.2f)
-				vRotateSpeed = 30f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
-			else if (vDiff >= 0.2f && vDiff < 0.4f)
-				vRotateSpeed = 80f;				//need to turn a little bit faster
-			else
-				vRotateSpeed = 400f;			//we must turn VERY quick because it's a big corner
-
-			//rotate the character in the direction it's going
-			if (vLeftDist < vRightDist)
-				RotateObj ("Left");
-			else
-				RotateObj ("Right");
-		}
-
-		//always keep the same distance on this new field
-		if (vCenterDist > vDistanceGround && !IsJumping) {
-			//walk
-			transform.Translate (-Vector3.up * vJumpSpeed * Time.deltaTime);
-		} else if (IsJumping) {	//going to the jumpheight
-			//make him going UP
-			transform.Translate (Vector3.up * vJumpSpeed * Time.deltaTime);
-
-			//increase jump time
-			vElapsedHeight += Time.deltaTime * vJumpSpeed;
-
-			//check if we jumped enought
-			if (vElapsedHeight >= vJumpHeight) {
-				IsJumping = false;
-				IsReadyToChange = false;
+			foreach (RaycastHit2D hit in hitAlll) {
+				if (vCurPlanet == hit.transform.gameObject) {
+					Debug.DrawRay (vlpos, (Vector3)hit.point - vlpos, Color.blue);	
+					vLeftDist = Vector3.Distance (vlpos, (Vector3)hit.point);
+					//	Debug.Log (vLeftDist);
+				}
 			}
-			//			myRigidBody.AddForce(transform.up * 500f);
-			//			IsJumping = false;
-			//			IsReadyToChange = false;
-		} else if (!CanJump && Input.GetAxis ("Vertical") == 0) {
-			CanJump = true;
-		}
-		else if (vCenterDist < (vDistanceGround-0.1f) && !IsJumping){
-			//make him going UP
-			transform.Translate (Vector3.up * vJumpSpeed * Time.deltaTime);
-		}
+
+			Vector3 vrpos = vLeftObj.transform.position;
+
+			//right ray
+			RaycastHit2D[] hitAllr = Physics2D.RaycastAll (vrpos, (Vector2)(fwd));
+			foreach (RaycastHit2D hit in hitAllr)
+				if (vCurPlanet == hit.transform.gameObject) {
+					Debug.DrawRay (vrpos, (Vector3)hit.point - vrpos, Color.blue);	
+					vRightDist = Vector3.Distance (vrpos, (Vector3)hit.point);
+					//Debug.Log (vRightDist);
+				}
+
+			//center to be able to have some kind of gravity
+			RaycastHit2D[] hitAllc = Physics2D.RaycastAll (myRenderer.bounds.center, (Vector2)(fwd));
+			bool vFoundGround = false;
+			foreach (RaycastHit2D hit in hitAllc) {
+				if (vCurPlanet == hit.transform.gameObject || ((hit.transform.tag == "Plateform" || hit.transform.tag == "Pushable") && CanWalkOnPlateform)) {
+					Debug.DrawRay (myRenderer.bounds.center, (Vector3)hit.point - transform.position, Color.blue);	
+					if (hit.transform.tag == "Plateform") {
+						CanJump = true;
+					}
+
+					if (Vector3.Distance (myRenderer.bounds.center, (Vector3)hit.point) < vCenterDist || !vFoundGround) {
+						vCenterDist = Vector3.Distance (myRenderer.bounds.center, (Vector3)hit.point);
+						vFoundGround = true;
+					}
+				}
+			}
+			//check if the Left or Right Probe ARE inside the collider which mean they cannot know the distance. 
+			//So we just rotate them to get a distance
+			if (vLeftDist == 0f)
+				vRightDist = 99f;
+			if (vRightDist == 0f)
+				vLeftDist = 99f;
+
+			//make sure if we doesn't find anything below the character, make him rotate until we find the floor!
+			if (vLeftDist == 99f && vRightDist == 99f) {
+				vLeftDist = 0f;
+			}
+
+			//check if we rotate the character
+			if (vLeftDist != vRightDist) {
+
+				//check we rotate at which speed.
+				float vDiff = vLeftDist - vRightDist;
+				if (vDiff < 0)
+					vDiff *= -1;
+
+				//here we calculate how fast we must rotate the character
+				if (vDiff < 0.2f)
+					vRotateSpeed = 30f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
+			else if (vDiff >= 0.2f && vDiff < 0.4f)
+					vRotateSpeed = 80f;				//need to turn a little bit faster
+			else
+					vRotateSpeed = 400f;			//we must turn VERY quick because it's a big corner
+
+				//rotate the character in the direction it's going
+				if (vLeftDist < vRightDist)
+					RotateObj ("Left");
+				else
+					RotateObj ("Right");
+			}
+
+			//always keep the same distance on this new field
+			if (vCenterDist > vDistanceGround && !IsJumping) {
+				//walk
+				transform.Translate (-Vector3.up * vJumpSpeed * Time.deltaTime);
+			} else if (IsJumping) {	//going to the jumpheight
+				//make him going UP
+				transform.Translate (Vector3.up * vJumpSpeed * Time.deltaTime);
+
+				//increase jump time
+				vElapsedHeight += Time.deltaTime * vJumpSpeed;
+
+				//check if we jumped enought
+				if (vElapsedHeight >= vJumpHeight) {
+					CheckIfNearbyPlanet ();
+					IsJumping = false;
+					IsReadyToChange = false;
+				}
+				//check if there is a nearby planet if JUMP and CAN change planets is activated
+
+				
+				//			myRigidBody.AddForce(transform.up * 500f);
+				//			IsJumping = false;
+				//			IsReadyToChange = false;
+			} else if (!CanJump && Input.GetAxis ("Vertical") == 0) {
+				CanJump = true;
+			} else if (vCenterDist < (vDistanceGround - 0.1f) && !IsJumping) {
+				//make him going UP
+				transform.Translate (Vector3.up * vJumpSpeed * Time.deltaTime);
+			}
 
 	}
 
 	void CheckIfNearbyPlanet()
 	{
 		bool vFound = false;
-
+		Debug.Log ("CheckIfNearbyPlanet");
 		foreach (GameObject vPlanet in vPlanetList)
 			//Debug.Log (vPlanetCollider);
 			if (vPlanet != vCurPlanet && !vFound && vPlanet != transform.gameObject) {
-				//Debug.Log ("in");
+				Debug.Log ("in");
 				//we found a planet. we transfert to the first one not in the range.
+				//boundOnPlanet = true;
 				vFound = true;
 				IsReadyToChange = false; //cannot change planet without making another jump. Prevent the character to be stuck between 2 planets
 				//change the planet
@@ -292,7 +316,7 @@ public class PlayerController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
-		
+
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		Debug.Log("1");
@@ -322,7 +346,10 @@ public class PlayerController : MonoBehaviour {
 			}	
 		}
 	}
-	void OnCollisionEnter2D(Collision2D col) {
-
-	}
+//
+//	void OnCollisionEnter2D(Collision2D col) {
+//		if (col.transform.tag == "SpacePlantform") {
+//			boundOnPlanet = false;
+//		}
+//	}
 }
