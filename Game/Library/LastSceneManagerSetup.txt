@@ -1,4 +1,7 @@
 sceneSetups:
-- path: Assets/Scenes/GravityScale.unity
+- path: 
   isLoaded: 1
   isActive: 1
+- path: Assets/Scenes/GravityScale.unity
+  isLoaded: 1
+  isActive: 0
