@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour {
 	public bool IsPlayer = true;
 	public bool CanJump = true;
 	public bool CanJumpOnOtherPlanets = true;
+	private float elapseanimation = 0f;
+	private float animationSpeed = 0.1f;
 
 	public Walk_Direction WalkingDirection = Walk_Direction.Right;
 
@@ -80,6 +82,13 @@ public class PlayerController : MonoBehaviour {
 //		}
 	}
 
+	//change current planet
+
+	public void ChangeCurPlanet(GameObject vNewPlanet)
+	{
+		vCurPlanet = vNewPlanet;
+		transform.parent = vCurPlanet.transform;
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -119,13 +128,13 @@ public class PlayerController : MonoBehaviour {
 			if (IsWalking) {
 				//move
 				transform.Translate (pos);
-				//
-				//				//increase time
-				//				elapseanimation += Time.deltaTime;
-				//				if (elapseanimation >= animationSpeed) {
-				//					UpdateCharacterAnimation ();
-				//					elapseanimation = 0f;
-				//				}
+				
+								//increase time
+								elapseanimation += Time.deltaTime;
+								if (elapseanimation >= animationSpeed) {
+									//UpdateCharacterAnimation ();
+									elapseanimation = 0f;
+								}
 			}
 
 
@@ -318,6 +327,25 @@ public class PlayerController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
+//
+//	void UpdateCharacterAnimation()
+//	{
+//		//get the right list ot use
+//		List<Sprite> vCurAnimList; 
+//		if (WalkingDirection == PG_Direction.Right)
+//			vCurAnimList = RightWalkAnimationList;
+//		else
+//			vCurAnimList = LeftWalkAnimationList;
+//
+//		if (vCurrentFrame + 1 >= vCurAnimList.Count)
+//			vCurrentFrame = 0;
+//		else
+//			vCurrentFrame++;
+//
+//		//then change the sprite correctly
+//		if (vCurAnimList.Count > 0)
+//			vRenderer.sprite = vCurAnimList[vCurrentFrame];
+//	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
@@ -355,3 +383,7 @@ public class PlayerController : MonoBehaviour {
 //		}
 //	}
 }
+
+
+
+
