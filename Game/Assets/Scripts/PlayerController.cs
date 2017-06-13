@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour {
 	private float vRotateSpeed = 10f;
 	private float vElapsedHeight = 0f;
 
-	private bool IsJumping = false;
+	public bool IsJumping = false;
 	private bool IsWalking;
 	private bool IsReadyToChange = false;
 
@@ -289,7 +289,7 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
-	void CheckIfNearbyPlanet()
+	public void CheckIfNearbyPlanet()
 	{
 		bool vFound = false;
 		Debug.Log ("CheckIfNearbyPlanet");
