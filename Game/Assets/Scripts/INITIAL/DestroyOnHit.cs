@@ -5,6 +5,8 @@ using UnityEngine;
 public class DestroyOnHit : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D others) {
-		Destroy (others.gameObject);
+		if (others.transform.tag == "Rock") {
+			Destroy (others.gameObject);
+		}
 	}
 }

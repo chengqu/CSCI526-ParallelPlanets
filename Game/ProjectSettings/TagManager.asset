@@ -15,6 +15,7 @@ TagManager:
   - Plateform
   - Projectile
   - Enemy
+  - Rock
   layers:
   - Default
   - TransparentFX
