@@ -4,45 +4,49 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	public enum Walk_Direction {Right, Left};
-	public List<GameObject> vPlanetList;
 
-	public float vJumpHeight = 1f;
-	public float vJumpSpeed = 6f;
-	public float vDistanceGround = 2f;
-	public float vWalkSpeed = 5f;
+    //public variables
+	public enum Walk_Direction {Right, Left};   //directions the player can walk
+    public Walk_Direction WalkingDirection = Walk_Direction.Right;  //set initial walking direction to right
+    public List<GameObject> vPlanetList;        //a list of planet
+    public GameObject vCurPlanet;               //gameobject to store the palyer's current planet
+    public GameObject vCurField;                //gameobject to store the player's current gravity field
 
-	public bool vCanMove = true;
-	public bool CanWalkOnPlateform = false;		
-	public bool IsAutoWalking = false;
-	public bool IsPlayer = true;
-	public bool CanJump = true;
-	public bool CanJumpOnOtherPlanets = true;
-	private float elapseanimation = 0f;
-	private float animationSpeed = 0.1f;
+    public float vJumpHeight = 1f;              //The limit of height the player can jump
+	public float vJumpSpeed = 6f;               //the speed the player can jump
+	public float vDistanceGround = 2f;          //distance of the ground. Clouds are higher than character but still rotate!
+    public float vWalkSpeed = 5f;               //how fast the character will walk
+    public bool CanJump = true;                 //check if the player can jump
+    public bool CanJumpOnOtherPlanets = true;   //check if the player can jump on other planets
+    public float vElapsedHeight = 0f;           //elapsed jumping height
+    public bool IsJumping = false;              //check if player is jumping
+    public bool IsReadyToChange = false;        //check if the player movement ready to change
 
-	public Walk_Direction WalkingDirection = Walk_Direction.Right;
+    public bool vCanMove = true;                //check if the character can move
+    public bool CanWalkOnPlateform = false;     //check if it can jump on plateform. Prevent Clouds from getting higher when passing above the plateform
+    public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
+    public bool IsPlayer = true;                //check if its the player
+	
 
-	private Vector3 pos;
-	private Quaternion rotation;
+    //private variables
+    private float elapseanimation = 0f;         //elapsed walking animation
+	private float animationSpeed = 0.1f;        //walk animation speed
+	private Vector3 pos;                        //init the position as a 3d vector
+	private Quaternion rotation;                //init the rotation of player
 
-	private float vCenterDist;
-	private float vLeftDist;
-	private float vRightDist;
-	private float vRotateSpeed = 10f;
-	public float vElapsedHeight = 0f;
+	private float vCenterDist;                  //the dist between player center to the ground
+	private float vLeftDist;                    //dist between player center to the left hitpoint
+	private float vRightDist;                   //dist between player center tot the right hitpoint
+	private float vRotateSpeed = 10f;           //rotate speed of player	
 
-	public bool IsJumping = false;
-	private bool IsWalking;
-	public bool IsReadyToChange = false;
+	private bool IsWalking;                     //check if player is walking
+    private bool FoundNearbyPlanet;              //check if a nearby planet found
+               
+    private GameObject vLeftObj, vRightObj;     //the left probe and right probe of the player to detect planets
+	private GameObject vCircleCollider;         //player's circle collider
+	private Rigidbody2D myRigidBody;            //player's rigid body
+	private SpriteRenderer myRenderer;          //player's sprite renderer
 
-	public GameObject vCurPlanet;
-	private GameObject vLeftObj, vRightObj;
-
-	private GameObject vCircleCollider;
-	private Rigidbody2D myRigidBody;
-	private SpriteRenderer myRenderer;
-	//private PlanetCollider vPlanetCollider;
 
 	// Use this for initialization
 	void Start () {
@@ -50,6 +54,7 @@ public class PlayerController : MonoBehaviour {
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		vCurPlanet = null;
+        vCurField = null;
 		//keep the rotation in mind
 		Vector3 vOriginalRotation = transform.rotation.eulerAngles;
 
@@ -60,33 +65,24 @@ public class PlayerController : MonoBehaviour {
 		vLeftObj = Instantiate(Resources.Load("Probe") as GameObject);
 		vLeftObj.transform.position = myRenderer.bounds.center + new Vector3(myRenderer.bounds.extents.x/2, 0f, 0f);
 		vLeftObj.transform.parent = transform;
-		//vLeftObj.hideFlags = HideFlags.HideInHierarchy;
 
 		//create left probe
 		vRightObj = Instantiate(Resources.Load("Probe") as GameObject);
 		vRightObj.transform.position = myRenderer.bounds.center + new Vector3(-myRenderer.bounds.extents.x/2, 0f, 0f);
 		vRightObj.transform.parent = transform;
-		//vRightObj.hideFlags = HideFlags.HideInHierarchy;
+
 		//then rotate to the original rotation
 		transform.rotation = Quaternion.Euler(vOriginalRotation);
 
 		IsReadyToChange = false;
-//		if (CanJumpOnOtherPlanets) {
-//			
-//			vCircleCollider = Instantiate(Resources.Load("CircleCollider") as GameObject);
-//			vCircleCollider.transform.parent = transform;
-//			vCircleCollider.transform.localPosition = new Vector3 (0f, 0f, 0f);
-//			//vPlanetCollider = vCircleCollider.GetComponent<PlanetCollider> ();
-//			//vCircleCollider.hideFlags = HideFlags.HideInHierarchy;
-//
-//		}
-	}
+    }
 
 	//change current planet
 
 	public void ChangeCurPlanet(GameObject vNewPlanet)
 	{
 		vCurPlanet = vNewPlanet;
+        //set the parent of the player the planet he's currently on
 		//transform.parent = vCurPlanet.transform;
 	}
 
@@ -141,24 +137,21 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	//public bool boundOnPlanet = true;
 
 	void FixedUpdate () {
-//		if (!boundOnPlanet) {
-//			vCurPlanet = null;
-//			myRigidBody.gravityScale = 1;
-//		} else {
+        //update per frame, always keep the player down to a ground
 			keepItDownDirectionPointToPlanet ();
-		//}
 	}
 
-	private GameObject OwnPlanet;
+	
 
-	void FindOwnPlanet () {
-		if (transform.tag == "PlanetScale") {
+	void FindCurPlanet () {
+
+		if (transform.tag == "GravityField") {
+            vCurField = transform.gameObject;
 			foreach (Transform child in transform) {
 				if (child.gameObject.tag == "Planet")
-					OwnPlanet = child.gameObject;
+					vCurPlanet = child.gameObject;
 			}
 		}
 	}
@@ -182,6 +175,8 @@ public class PlayerController : MonoBehaviour {
 				foreach (RaycastHit2D hit in hitAlll) {
 					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
 						vCurPlanet = hit.transform.gameObject;
+                        if(hit.transform.parent != null)
+                          vCurField = hit.transform.parent.gameObject;
 				}
 			}
 
@@ -189,7 +184,6 @@ public class PlayerController : MonoBehaviour {
 				if (vCurPlanet == hit.transform.gameObject) {
 					Debug.DrawRay (vlpos, (Vector3)hit.point - vlpos, Color.blue);	
 					vLeftDist = Vector3.Distance (vlpos, (Vector3)hit.point);
-					//	Debug.Log (vLeftDist);
 				}
 			}
 
@@ -201,7 +195,6 @@ public class PlayerController : MonoBehaviour {
 				if (vCurPlanet == hit.transform.gameObject) {
 					Debug.DrawRay (vrpos, (Vector3)hit.point - vrpos, Color.blue);	
 					vRightDist = Vector3.Distance (vrpos, (Vector3)hit.point);
-					//Debug.Log (vRightDist);
 				}
 
 			//center to be able to have some kind of gravity
@@ -269,17 +262,16 @@ public class PlayerController : MonoBehaviour {
 				vElapsedHeight += Time.deltaTime * vJumpSpeed;
 
 				//check if we jumped enought
-				if (vElapsedHeight >= vJumpHeight) {
-					CheckIfNearbyPlanet ();
+				if (vElapsedHeight >= vJumpHeight || FoundNearbyPlanet) {
+                    //check nearbyplanet if ready to change
+                    if (IsReadyToChange)
+                        CheckIfNearbyPlanet ();
 					IsJumping = false;
 					IsReadyToChange = false;
+                    FoundNearbyPlanet = false;
 				}
 				//check if there is a nearby planet if JUMP and CAN change planets is activated
 
-				
-				//			myRigidBody.AddForce(transform.up * 500f);
-				//			IsJumping = false;
-				//			IsReadyToChange = false;
 			} else if (!CanJump && Input.GetAxis ("Vertical") == 0) {
 				CanJump = true;
 			} else if (vCenterDist < (vDistanceGround - 0.1f) && !IsJumping) {
@@ -292,16 +284,13 @@ public class PlayerController : MonoBehaviour {
 	public void CheckIfNearbyPlanet()
 	{
 		bool vFound = false;
-		Debug.Log ("CheckIfNearbyPlanet");
 		foreach (GameObject vPlanet in vPlanetList)
-			//Debug.Log (vPlanetCollider);
 			if (vPlanet != vCurPlanet && !vFound && vPlanet != transform.gameObject) {
-				Debug.Log ("in");
 				//we found a planet. we transfert to the first one not in the range.
-				//boundOnPlanet = true;
 				vFound = true;
 				IsReadyToChange = false; //cannot change planet without making another jump. Prevent the character to be stuck between 2 planets
-				//change the planet
+                FoundNearbyPlanet = false;
+                //change the planet
 				vCurPlanet = vPlanet;
 
 				//make sure the character scale isn't changed between planets
@@ -349,39 +338,35 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		Debug.Log("1");
-		if (col.tag == "PlanetScale")
-		{
-			//add this planet
-			foreach (Transform child in col.gameObject.transform) {
-				if (child.gameObject.tag == "Planet" && !vPlanetList.Contains (child.gameObject)) {
-					vPlanetList.Add (child.gameObject);
-					Debug.Log("collider");
-				}
-			}	
+        //triggers when colide with a gameobject
+        if (col.tag == "GravityField")
+        {
+            //if the colider is GravityField
+            //add this planet
+            if (col.gameObject != vCurField){ 
+                foreach (Transform child in col.gameObject.transform) {
+                    if (child.gameObject.tag == "Planet" && !vPlanetList.Contains(child.gameObject)) {
+                        vPlanetList.Add(child.gameObject);
+                        FoundNearbyPlanet = true;
+                    }
+                }
+            }
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D col)
 	{
 		//make sure it's the player
-		if (col.tag == "PlanetScale")
+		if (col.tag == "GravityField")
 		{
 			//remove this planet
 			foreach (Transform child in col.gameObject.transform) {
 				if (child.gameObject.tag == "Planet") {
 					vPlanetList.Remove (child.gameObject);
-					Debug.Log("colliderExit");
 				}
 			}	
 		}
 	}
-//
-//	void OnCollisionEnter2D(Collision2D col) {
-//		if (col.transform.tag == "SpacePlantform") {
-//			boundOnPlanet = false;
-//		}
-//	}
 }
 
 

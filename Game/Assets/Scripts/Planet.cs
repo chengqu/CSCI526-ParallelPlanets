@@ -81,7 +81,7 @@ public class Planet : MonoBehaviour
 		//ONLY get PG_Gravity and PG_Character in the temp list
 		foreach (Transform child in transform)
 		{
-			if (child.GetComponent<Gravity> () != null || child.GetComponent<BallController>() != null) {
+			if (child.GetComponent<Gravity> () != null || child.GetComponent<PlayerController>() != null) {
 				vTempList.Add (child.gameObject);
 			}
 		}
