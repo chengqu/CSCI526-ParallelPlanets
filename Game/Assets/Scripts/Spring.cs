@@ -39,23 +39,10 @@ public class Spring : MonoBehaviour
         {
             GameObject vObj = col.gameObject;
             PlayerController vChar = vObj.GetComponent<PlayerController>();
-            vChar.CanJump = true;
-            vChar.CanJumpOnOtherPlanets = true;
-            vObj.transform.Translate(Vector3.up * vChar.vJumpSpeed * Time.deltaTime);
-            //increase jump time
-            vElapsedHeight += Time.deltaTime * vChar.vJumpSpeed;
-
-            //check if we jumped enought
-            if (vElapsedHeight >= vJumpHeight)
-            {
-                col.gameObject.GetComponent<PlayerController>().CheckIfNearbyPlanet();
-                vChar.CanJump = false;
-                vChar.CanJumpOnOtherPlanets = false;
-                vChar.isJumping = true;
-                vElapsedHeight = 0f;
-                vChar.IsReadyToChange = true;
-            }
-            
+			vChar.IsJumping = true;
+			vChar.CanJump = false;
+			vChar.vElapsedHeight = -2f;
+			vChar.IsReadyToChange = true;
         }
     }
 

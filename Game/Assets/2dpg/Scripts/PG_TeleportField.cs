@@ -85,7 +85,7 @@ public class PG_TeleportField : MonoBehaviour {
 			//change obj position
 			vCurObj.transform.position = vLinkedObj.transform.position;
 			vCurObj.transform.position = (Vector2)vObj.transform.position + (Vector2)vLinkedObj.transform.TransformDirection (Vector3.up * .5f);
-			vCurObj.transform.parent = vLinkedObj.transform.parent.transform;
+			//vCurObj.transform.parent = vLinkedObj.transform.parent.transform;
 			vCurObj.transform.localRotation = vLinkedObj.transform.localRotation;
 
 			//change planets for the teleports

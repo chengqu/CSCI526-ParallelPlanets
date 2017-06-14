@@ -30,11 +30,11 @@ public class PlayerController : MonoBehaviour {
 	private float vLeftDist;
 	private float vRightDist;
 	private float vRotateSpeed = 10f;
-	private float vElapsedHeight = 0f;
+	public float vElapsedHeight = 0f;
 
 	public bool IsJumping = false;
 	private bool IsWalking;
-	private bool IsReadyToChange = false;
+	public bool IsReadyToChange = false;
 
 	public GameObject vCurPlanet;
 	private GameObject vLeftObj, vRightObj;
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour {
 	public void ChangeCurPlanet(GameObject vNewPlanet)
 	{
 		vCurPlanet = vNewPlanet;
-		transform.parent = vCurPlanet.transform;
+		//transform.parent = vCurPlanet.transform;
 	}
 
 	// Update is called once per frame
@@ -305,7 +305,7 @@ public class PlayerController : MonoBehaviour {
 				vCurPlanet = vPlanet;
 
 				//make sure the character scale isn't changed between planets
-				transform.parent = vCurPlanet.transform;
+				//transform.parent = vCurPlanet.transform;
 			}
 	}
 
