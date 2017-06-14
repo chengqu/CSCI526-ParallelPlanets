@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour {
 		//check if this character can move freely or it's disabled
 		if (vCanMove) {
 			pos = Vector3.zero;
-
+			Debug.Log (Input.GetAxis ("Vertical"));
 			//check if going RIGHT
 			if ((IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
 				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
@@ -140,10 +140,21 @@ public class PlayerController : MonoBehaviour {
 //			myRigidBody.gravityScale = 1;
 //		} else {
 			keepItDownDirectionPointToPlanet ();
+		if (vCurPlanet != null) {
+			AddGravity (vCurPlanet);
+		}
 		//}
 	}
 
 	private GameObject OwnPlanet;
+
+	public float gravity = 10;
+	void AddGravity(GameObject vCurPlanet) {
+		Vector3 gravityDirection = (vCurPlanet.transform.position - transform.position).normalized;
+
+		//Add the gravity to the target object
+		myRigidBody.AddForce(gravity * gravityDirection);
+	}
 
 	void FindOwnPlanet () {
 		if (transform.tag == "PlanetScale") {
@@ -201,10 +212,10 @@ public class PlayerController : MonoBehaviour {
 			foreach (RaycastHit2D hit in hitAllc) {
 				if (vCurPlanet == hit.transform.gameObject || ((hit.transform.tag == "Plateform" || hit.transform.tag == "Pushable") && CanWalkOnPlateform)) {
 					Debug.DrawRay (myRenderer.bounds.center, (Vector3)hit.point - transform.position, Color.blue);	
-					if (hit.transform.tag == "Plateform") {
-						CanJump = true;
-					}
-
+//				if (hit.transform.tag == "Plateform" || hit.transform.tag == "Planet") {
+//						CanJump = true;
+//					}
+//
 					if (Vector3.Distance (myRenderer.bounds.center, (Vector3)hit.point) < vCenterDist || !vFoundGround) {
 						vCenterDist = Vector3.Distance (myRenderer.bounds.center, (Vector3)hit.point);
 						vFoundGround = true;
@@ -247,10 +258,11 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			//always keep the same distance on this new field
-			if (vCenterDist > vDistanceGround && !IsJumping) {
-				//walk
-				transform.Translate (-Vector3.up * vJumpSpeed * Time.deltaTime);
-			} else if (IsJumping) {	//going to the jumpheight
+//			if (vCenterDist > vDistanceGround && !IsJumping) {
+//				//walk
+//				transform.Translate (-Vector3.up * vJumpSpeed * Time.deltaTime);
+//			} else 
+			if (IsJumping) {	//going to the jumpheight
 				//make him going UP
 				transform.Translate (Vector3.up * vJumpSpeed * Time.deltaTime);
 
