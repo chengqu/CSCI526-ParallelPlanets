@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour {
 	public void ChangeCurPlanet(GameObject vNewPlanet)
 	{
 		vCurPlanet = vNewPlanet;
+        vCurField = vNewPlanet.transform.parent.gameObject;
         //set the parent of the player the planet he's currently on
 		//transform.parent = vCurPlanet.transform;
 	}
@@ -141,11 +142,22 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate () {
         //update per frame, always keep the player down to a ground
 			keepItDownDirectionPointToPlanet ();
-	}
+        if (vCurPlanet != null)
+        {
+            AddGravity(vCurPlanet);
+        }
+    }
 
-	
+    //TODO: need to fix the variables
+    void AddGravity(GameObject vCurPlanet)
+    {
+        Vector3 gravityDirection = (vCurPlanet.transform.position - transform.position).normalized;
 
-	void FindCurPlanet () {
+        //Add the gravity to the target object
+        //myRigidBody.AddForce(gravity * gravityDirection);
+    }
+
+    void FindCurPlanet () {
 
 		if (transform.tag == "GravityField") {
             vCurField = transform.gameObject;
@@ -292,7 +304,6 @@ public class PlayerController : MonoBehaviour {
                 FoundNearbyPlanet = false;
                 //change the planet
 				vCurPlanet = vPlanet;
-
 				//make sure the character scale isn't changed between planets
 				//transform.parent = vCurPlanet.transform;
 			}
@@ -343,7 +354,8 @@ public class PlayerController : MonoBehaviour {
         {
             //if the colider is GravityField
             //add this planet
-            if (col.gameObject != vCurField){ 
+            if (col.gameObject != vCurField){
+                vCurField = col.gameObject;
                 foreach (Transform child in col.gameObject.transform) {
                     if (child.gameObject.tag == "Planet" && !vPlanetList.Contains(child.gameObject)) {
                         vPlanetList.Add(child.gameObject);
@@ -351,20 +363,6 @@ public class PlayerController : MonoBehaviour {
                     }
                 }
             }
-		}
-	}
-
-	void OnTriggerExit2D(Collider2D col)
-	{
-		//make sure it's the player
-		if (col.tag == "GravityField")
-		{
-			//remove this planet
-			foreach (Transform child in col.gameObject.transform) {
-				if (child.gameObject.tag == "Planet") {
-					vPlanetList.Remove (child.gameObject);
-				}
-			}	
 		}
 	}
 }
