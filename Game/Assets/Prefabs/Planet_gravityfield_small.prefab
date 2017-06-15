@@ -57,8 +57,8 @@ GameObject:
   - component: {fileID: 58003890051421400}
   - component: {fileID: 114803107845503442}
   m_Layer: 0
-  m_Name: Small_Atmosphere_with_Planet
-  m_TagString: PlanetScale
+  m_Name: Planet_gravityfield_small
+  m_TagString: GravityField
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

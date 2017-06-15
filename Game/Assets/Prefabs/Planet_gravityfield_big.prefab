@@ -23,8 +23,8 @@ GameObject:
   - component: {fileID: 58125338167670036}
   - component: {fileID: 114624311587513408}
   m_Layer: 0
-  m_Name: BIG_Atmosphere_Planet
-  m_TagString: PlanetScale
+  m_Name: Planet_gravityfield_big
+  m_TagString: GravityField
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 4075986630994880}
   - component: {fileID: 212385714426287522}
   m_Layer: 0
-  m_Name: Atmosphere4
+  m_Name: GravityField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

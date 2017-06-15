@@ -16,6 +16,7 @@ TagManager:
   - Projectile
   - Enemy
   - Rock
+  - GravityField
   layers:
   - Default
   - TransparentFX
