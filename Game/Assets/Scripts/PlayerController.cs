@@ -365,6 +365,20 @@ public class PlayerController : MonoBehaviour {
             }
 		}
 	}
+
+	void OnTriggerExit2D(Collider2D col)
+	{
+		//make sure it's the player
+		if (col.tag == "GravityField")
+		{
+			//remove this planet
+			foreach (Transform child in col.gameObject.transform) {
+				if (child.gameObject.tag == "Planet") {
+					vPlanetList.Remove (child.gameObject);
+				}
+			}	
+		}
+	}
 }
 
 

@@ -5,6 +5,7 @@ public class Spring : MonoBehaviour
 {
     public AudioClip vSpringSound;
     public bool TempDisable = false;                //check if it's temporary disabled 
+	public float ElapsedHeight = -2f;
 
     private AudioSource vAudioSource;
     private float vOrignalScale = 1f;
@@ -41,7 +42,7 @@ public class Spring : MonoBehaviour
             PlayerController vChar = vObj.GetComponent<PlayerController>();
 			vChar.IsJumping = true;
 			vChar.CanJump = false;
-			vChar.vElapsedHeight = -2f;
+			vChar.vElapsedHeight = ElapsedHeight;
 			vChar.IsReadyToChange = true;
         }
     }
