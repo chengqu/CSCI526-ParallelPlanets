@@ -340,7 +340,7 @@ public class PlayerController : MonoBehaviour {
                 //change the planet
 				vCurPlanet = vPlanet;
 				//make sure the character scale isn't changed between planets
-				//transform.parent = vCurPlanet.transform;
+				transform.parent = vCurPlanet.transform;
 			}
 	}
 

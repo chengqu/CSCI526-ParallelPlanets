@@ -170,6 +170,22 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &237163668 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1532605380570740, guid: 391753f348ac14f92a20bc7d88cd3aca,
+    type: 2}
+  m_PrefabInternal: {fileID: 122950389}
+--- !u!114 &237163669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 237163668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e2f3aa1c0f064ccfbbc4dac8361d3b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &379352973 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1365625346619358, guid: 391753f348ac14f92a20bc7d88cd3aca,
@@ -857,6 +873,7 @@ GameObject:
   - component: {fileID: 1404735889}
   - component: {fileID: 1404735888}
   - component: {fileID: 1404735887}
+  - component: {fileID: 1404735890}
   m_Layer: 0
   m_Name: Atmosphere3 (2)
   m_TagString: GravityField
@@ -926,7 +943,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1404735886}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.28, y: 0.75, z: 0}
+  m_LocalPosition: {x: -10.69, y: 0.75, z: 0}
   m_LocalScale: {x: 1.5886127, y: 1.6375957, z: 1}
   m_Children:
   - {fileID: 1420914443}
@@ -934,6 +951,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1404735890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1404735886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d5c9a36a1e24875b9523567b9e050d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rightLimit: 2.5
+  leftLimit: 3
+  speed: 2
 --- !u!1 &1420914442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1372,3 +1403,22 @@ MonoBehaviour:
   vDistanceGround: 0.3
   CanWalkOnPlateform: 0
   vCurPlanet: {fileID: 0}
+--- !u!1 &2118249333 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1290254882604048, guid: 89c72d1c7466241469232043f4ae0237,
+    type: 2}
+  m_PrefabInternal: {fileID: 753620889}
+--- !u!114 &2118249334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2118249333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628c908f5af684fd6935d61f8176ed84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upLimit: 2.5
+  downLimit: 1
+  speed: 2
