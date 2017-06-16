@@ -6,6 +6,18 @@ public class PlayerController : MonoBehaviour {
 
 
     //public variables
+	//mobile controller variables
+	public Texture btnLeft_tex;
+	public Texture btnRight_tex;
+	public Texture btnJump_tex;
+	public GUI btnLeft;
+	public GUI btnRight;
+	public GUI btnJump;
+
+	public float moveSpeed = 5f;
+	public float jumpForce = 50f;
+
+	//in game variables
 	public enum Walk_Direction {Right, Left};   //directions the player can walk
     public Walk_Direction WalkingDirection = Walk_Direction.Right;  //set initial walking direction to right
     public List<GameObject> vPlanetList;        //a list of planet
@@ -29,6 +41,7 @@ public class PlayerController : MonoBehaviour {
 	
 
     //private variables
+	private bool moveLeft, moveRight, doJump = false;
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
 	private Vector3 pos;                        //init the position as a 3d vector
@@ -87,6 +100,28 @@ public class PlayerController : MonoBehaviour {
 		//transform.parent = vCurPlanet.transform;
 	}
 
+	public void OnGUI(){
+
+		if (GUI.RepeatButton (new Rect (10, 300, 50, 50), btnLeft_tex)) {
+			moveRight = false;
+			moveLeft = true;
+		} else {
+			moveLeft = false;
+		}
+
+		if (GUI.RepeatButton (new Rect (80, 300, 50, 50), btnRight_tex)) {
+			moveLeft = false;
+			moveRight = true;
+		} else {
+			moveRight = false;
+		}
+
+		if (GUI.Button (new Rect (1100, 300, 50, 50), btnJump_tex)) {
+			doJump = true;
+		} else {
+			doJump = false;
+		}
+	}
 	// Update is called once per frame
 	void Update () {
 
@@ -95,19 +130,19 @@ public class PlayerController : MonoBehaviour {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
-			if ((IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+			if (moveRight || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
 				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Right;
 			}
 
 			//check if going LEFT
-			if ((IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+			if (moveLeft || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
 				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Left;
 			}
 
 			//check if JUMP
-			if (IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
+			if (doJump || IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
 				IsJumping = true;
 				CanJump = false;
 				vElapsedHeight = 0f;
@@ -246,10 +281,10 @@ public class PlayerController : MonoBehaviour {
 					vDiff *= -1;
 
 				//here we calculate how fast we must rotate the character
-			if (vDiff < 0.001)
+			if (vDiff < 0.01)
 				vRotateSpeed = 1f;
 			else if (vDiff < 0.2f)
-					vRotateSpeed = 30f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
+					vRotateSpeed = 10f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
 			else if (vDiff >= 0.2f && vDiff < 0.4f)
 					vRotateSpeed = 80f;				//need to turn a little bit faster
 			else
@@ -368,7 +403,7 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerExit2D(Collider2D col)
 	{
-		//make sure it's the player
+		//triggers when exit a collision
 		if (col.tag == "GravityField")
 		{
 			//remove this planet
