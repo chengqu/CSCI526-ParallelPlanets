@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  productGUID: 6a4fa9e2ab6b9411e8a6f91306bac289
+  productGUID: df41f9e33a6271241883576cf7e72286
   AndroidProfiler: 0
   defaultScreenOrientation: 4
   targetDevice: 2
@@ -136,14 +136,8 @@ PlayerSettings:
       depthFormat: 1
   protectGraphicsMemory: 0
   useHDRDisplay: 0
-  applicationIdentifier:
-    Android: com.Company.ProductName
-    Standalone: unity.DefaultCompany.Game
-    Tizen: com.Company.ProductName
-    iOS: com.Company.ProductName
-    tvOS: com.Company.ProductName
-  buildNumber:
-    iOS: 0
+  applicationIdentifier: {}
+  buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
@@ -208,9 +202,9 @@ PlayerSettings:
   iOSURLSchemes: []
   iOSBackgroundModes: 0
   iOSMetalForceHardShadows: 0
-  metalEditorSupport: 0
+  metalEditorSupport: 1
   metalAPIValidation: 1
-  iOSRenderExtraFrameOnPause: 1
+  iOSRenderExtraFrameOnPause: 0
   appleDeveloperTeamID: 
   iOSManualSigningProvisioningProfileID: 
   tvOSManualSigningProvisioningProfileID: 
@@ -408,7 +402,7 @@ PlayerSettings:
   ps4DownloadDataSize: 0
   ps4GarlicHeapSize: 2048
   ps4ProGarlicHeapSize: 2560
-  ps4Passcode: 5PN2qmWqBlQ9wQj99nsQzldVI5ZuGXbE
+  ps4Passcode: frAQBc8Wsa1xVPfvJcrgRYwTiizs2trQ
   ps4UseDebugIl2cppLibs: 0
   ps4pnSessions: 1
   ps4pnPresence: 1
@@ -455,7 +449,7 @@ PlayerSettings:
   psp2LiveAreaTrialPath: 
   psp2PatchChangeInfoPath: 
   psp2PatchOriginalPackage: 
-  psp2PackagePassword: WRK5RhRXdCdG5nG5azdNMK66MuCV6GXi
+  psp2PackagePassword: F69AzBlax3CF3EDNhm3soLBPh71Yexui
   psp2KeystoneFile: 
   psp2MemoryExpansionMode: 0
   psp2DRMType: 0
@@ -597,8 +591,8 @@ PlayerSettings:
   cloudServicesEnabled: {}
   facebookSdkVersion: 7.9.1
   apiCompatibilityLevel: 2
-  cloudProjectId: ba55f86e-21db-42d0-b0eb-2bd718c788fe
-  projectName: Game
-  organizationId: konoemay
+  cloudProjectId: 
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   enableNewInputSystem: 0

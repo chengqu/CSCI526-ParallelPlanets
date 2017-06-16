@@ -41,11 +41,11 @@ public class PG_TeleportField : MonoBehaviour {
 	void ToggleComponentsObj(GameObject vObj, bool vChoice, GameObject vNewPlanet = null)
 	{
 		//character
-		if (vObj.GetComponent<PG_Character> ()) {
-			vObj.GetComponent<PG_Character> ().vCanMove = vChoice;
+		if (vObj.GetComponent<PlayerController> ()) {
+			vObj.GetComponent<PlayerController> ().vCanMove = vChoice;
 
 			if (vNewPlanet != null)
-				vObj.GetComponent<PG_Character> ().ChangeCurPlanet (vNewPlanet);
+				vObj.GetComponent<PlayerController> ().ChangeCurPlanet (vNewPlanet);
 		}
 
 		//projectiles
@@ -85,12 +85,12 @@ public class PG_TeleportField : MonoBehaviour {
 			//change obj position
 			vCurObj.transform.position = vLinkedObj.transform.position;
 			vCurObj.transform.position = (Vector2)vObj.transform.position + (Vector2)vLinkedObj.transform.TransformDirection (Vector3.up * .5f);
-			vCurObj.transform.parent = vLinkedObj.transform.parent.transform;
+			//vCurObj.transform.parent = vLinkedObj.transform.parent.transform;
 			vCurObj.transform.localRotation = vLinkedObj.transform.localRotation;
 
 			//change planets for the teleports
 			//for character
-			PG_Character vChar = vObj.GetComponent<PG_Character> ();
+			PlayerController vChar = vObj.GetComponent<PlayerController> ();
 			if (vChar != null)
 				vChar.ChangeCurPlanet (vLinkedObj.transform.parent.gameObject);
 
@@ -151,7 +151,7 @@ public class PG_TeleportField : MonoBehaviour {
 		bool vCanBeTeleported = false;
 
 		//ONLY teleport these tags below
-		if (((vObj.tag == "Player" || vObj.tag == "Enemy") && vObj.GetComponent<PG_Character>().vCanMove) 
+		if (((vObj.tag == "Player" || vObj.tag == "Enemy") && vObj.GetComponent<PlayerController>().vCanMove) 
 			|| (vObj.tag == "Projectile" && vObj.GetComponent<PG_Projectile>().vCanMove)
 			|| (vObj.tag == "Object" && vObj.GetComponent<PG_Object>().vCanMove)) {
 			vCanBeTeleported = true;
