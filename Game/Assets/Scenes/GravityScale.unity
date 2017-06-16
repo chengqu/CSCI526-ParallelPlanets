@@ -163,6 +163,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1532605380570740, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
+      propertyPath: m_TagString
+      value: GravityField
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
   m_IsPrefabParent: 0
@@ -396,19 +400,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214eb4a67284240c687b5c62ce1f7de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WalkingDirection: 0
   vPlanetList: []
+  vCurPlanet: {fileID: 0}
+  vCurField: {fileID: 0}
   vJumpHeight: 1
   vJumpSpeed: 6
   vDistanceGround: 0.5
   vWalkSpeed: 1
+  CanJump: 0
+  CanJumpOnOtherPlanets: 0
+  vElapsedHeight: 0
+  IsJumping: 0
+  IsReadyToChange: 0
   vCanMove: 1
   CanWalkOnPlateform: 0
   IsAutoWalking: 1
   IsPlayer: 1
-  CanJump: 0
-  CanJumpOnOtherPlanets: 0
-  WalkingDirection: 0
-  vCurPlanet: {fileID: 0}
 --- !u!61 &1037904999
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -584,19 +592,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214eb4a67284240c687b5c62ce1f7de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WalkingDirection: 0
   vPlanetList: []
+  vCurPlanet: {fileID: 0}
+  vCurField: {fileID: 0}
   vJumpHeight: 1
-  vJumpSpeed: 2
+  vJumpSpeed: 3
   vDistanceGround: 0.3
   vWalkSpeed: 3
+  CanJump: 1
+  CanJumpOnOtherPlanets: 1
+  vElapsedHeight: 0
+  IsJumping: 0
+  IsReadyToChange: 0
   vCanMove: 1
   CanWalkOnPlateform: 0
   IsAutoWalking: 0
   IsPlayer: 1
-  CanJump: 1
-  CanJumpOnOtherPlanets: 1
-  WalkingDirection: 0
-  vCurPlanet: {fileID: 0}
 --- !u!95 &1082084944
 Animator:
   serializedVersion: 3
@@ -745,7 +757,7 @@ GameObject:
   - component: {fileID: 1404735887}
   m_Layer: 0
   m_Name: Atmosphere3 (2)
-  m_TagString: PlanetScale
+  m_TagString: GravityField
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1046,6 +1058,14 @@ Prefab:
     - target: {fileID: 1575144863641934, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
       propertyPath: m_Name
       value: RotateAtmosphere (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1575144863641934, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 1532605380570740, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
+      propertyPath: m_TagString
+      value: GravityField
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 391753f348ac14f92a20bc7d88cd3aca, type: 2}
