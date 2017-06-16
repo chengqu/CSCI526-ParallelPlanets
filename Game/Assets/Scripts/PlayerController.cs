@@ -220,8 +220,10 @@ public class PlayerController : MonoBehaviour {
 	
 			if (vCurPlanet == null) {
 				foreach (RaycastHit2D hit in hitAlll) {
-					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
+					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject) {
 						vCurPlanet = hit.transform.gameObject;
+						transform.parent = vCurPlanet.transform;
+					}
                         if(hit.transform.parent != null)
                           vCurField = hit.transform.parent.gameObject;
 				}
