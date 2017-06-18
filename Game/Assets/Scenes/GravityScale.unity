@@ -643,7 +643,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1037904997}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 214eb4a67284240c687b5c62ce1f7de6, type: 3}
   m_Name: 
@@ -1604,8 +1604,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fc2f3d6d0714f4398b7eb2fc4c76ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dBox: {fileID: 0}
-  dText: {fileID: 0}
+  dBox: {fileID: 1436809767}
+  dText: {fileID: 457332783}
   dialogueAcctive: 0
 --- !u!1 &1982330717
 GameObject:
