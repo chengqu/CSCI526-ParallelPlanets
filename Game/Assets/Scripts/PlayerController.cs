@@ -102,21 +102,21 @@ public class PlayerController : MonoBehaviour {
 
 	public void OnGUI(){
 		if (IsPlayer) {
-			if (GUI.RepeatButton (new Rect (10, 380, 50, 50), btnLeft_tex)) {
+			if (GUI.RepeatButton (new Rect (0,Screen.height - 50,80,50), btnLeft_tex)) {
 				moveRight = false;
 				moveLeft = true;
 			} else {
 				moveLeft = false;
 			}
 
-			if (GUI.RepeatButton (new Rect (80, 380, 50, 50), btnRight_tex)) {
+			if (GUI.RepeatButton (new Rect (100,Screen.height - 50,80,50), btnRight_tex)) {
 				moveLeft = false;
 				moveRight = true;
 			} else {
 				moveRight = false;
 			}
 
-			if (GUI.Button (new Rect (1100, 380, 50, 50), btnJump_tex)) {
+			if (GUI.Button (new Rect (Screen.width - 100,Screen.height - 50,80,50), btnJump_tex)) {
 				doJump = true;
 			} else {
 				doJump = false;
