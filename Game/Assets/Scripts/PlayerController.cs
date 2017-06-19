@@ -118,8 +118,6 @@ public class PlayerController : MonoBehaviour {
 
 			if (GUI.Button (new Rect (Screen.width - 100,Screen.height - 50,80,50), btnJump_tex)) {
 				doJump = true;
-			} else {
-				doJump = false;
 			}
 		}
 	}
@@ -148,7 +146,7 @@ public class PlayerController : MonoBehaviour {
 				CanJump = false;
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
-
+				doJump = false;
 			}
 
 			//check if the character is walking
