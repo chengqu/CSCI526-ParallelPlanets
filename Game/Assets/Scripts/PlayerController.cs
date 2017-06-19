@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+	public bool findTarget = false;
 
     //public variables
 	//mobile controller variables
@@ -63,7 +64,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		vCurPlanet = null;
@@ -102,21 +103,21 @@ public class PlayerController : MonoBehaviour {
 
 	public void OnGUI(){
 
-		if (GUI.RepeatButton (new Rect (10, 380, 50, 50), btnLeft_tex)) {
+		if (GUI.RepeatButton (new Rect (10, 300, 50, 50), btnLeft_tex)) {
 			moveRight = false;
 			moveLeft = true;
 		} else {
 			moveLeft = false;
 		}
 
-		if (GUI.RepeatButton (new Rect (80, 380, 50, 50), btnRight_tex)) {
+		if (GUI.RepeatButton (new Rect (80, 300, 50, 50), btnRight_tex)) {
 			moveLeft = false;
 			moveRight = true;
 		} else {
 			moveRight = false;
 		}
 
-		if (GUI.Button (new Rect (1100, 380, 50, 50), btnJump_tex)) {
+		if (GUI.Button (new Rect (1100, 300, 50, 50), btnJump_tex)) {
 			doJump = true;
 		} else {
 			doJump = false;
@@ -386,6 +387,10 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		if (col.CompareTag ("TargetItem")) {
+			Destroy (col.gameObject);
+			findTarget = true;
+		}
         //triggers when colide with a gameobject
         if (col.tag == "GravityField")
         {

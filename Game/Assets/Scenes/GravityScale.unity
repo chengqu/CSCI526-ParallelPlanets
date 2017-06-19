@@ -426,6 +426,7 @@ GameObject:
   - component: {fileID: 738903565}
   - component: {fileID: 738903564}
   - component: {fileID: 738903563}
+  - component: {fileID: 738903567}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -508,6 +509,19 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
+--- !u!114 &738903567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 738903561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5772b3b0c62d415c8625f0f55b1f565, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1082084948}
+  size: 1
 --- !u!1001 &753620889
 Prefab:
   m_ObjectHideFlags: 0
@@ -559,9 +573,10 @@ GameObject:
   m_Component:
   - component: {fileID: 921026233}
   - component: {fileID: 921026232}
+  - component: {fileID: 921026234}
   m_Layer: 0
   m_Name: cherry
-  m_TagString: Untagged
+  m_TagString: TargetItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -613,12 +628,27 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 921026231}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.2540657, y: 2.3194335, z: 0}
+  m_LocalPosition: {x: -0.5, y: 2.3, z: 0}
   m_LocalScale: {x: 1.5700872, y: 1.5256934, z: 1}
   m_Children: []
   m_Father: {fileID: 1297749138}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &921026234
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 921026231}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.00000023841858}
+  serializedVersion: 2
+  m_Radius: 0.35000002
 --- !u!1 &1037904997
 GameObject:
   m_ObjectHideFlags: 0
@@ -648,6 +678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214eb4a67284240c687b5c62ce1f7de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  findTarget: 0
   btnLeft_tex: {fileID: 0}
   btnRight_tex: {fileID: 0}
   btnJump_tex: {fileID: 0}
@@ -826,9 +857,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214eb4a67284240c687b5c62ce1f7de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btnLeft_tex: {fileID: 0}
-  btnRight_tex: {fileID: 0}
-  btnJump_tex: {fileID: 0}
+  findTarget: 0
+  btnLeft_tex: {fileID: 2800000, guid: f25485fbc4fb64a1ebc808d157af23e9, type: 3}
+  btnRight_tex: {fileID: 2800000, guid: bdf714b56966f4591a3de69f58985845, type: 3}
+  btnJump_tex: {fileID: 2800000, guid: 2c2070638c5d848c980b30eaf88414a7, type: 3}
   moveSpeed: 5
   jumpForce: 50
   WalkingDirection: 0
@@ -1046,6 +1078,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogue: Hi,Bunny
+  bunny: {fileID: 1082084943}
 --- !u!1 &1404735886
 GameObject:
   m_ObjectHideFlags: 0
