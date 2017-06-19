@@ -102,25 +102,25 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void OnGUI(){
+		if (IsPlayer) {
+			if (GUI.RepeatButton (new Rect (0,Screen.height - 50,80,50), btnLeft_tex)) {
+				moveRight = false;
+				moveLeft = true;
+			} else {
+				moveLeft = false;
+			}
+			if (GUI.RepeatButton (new Rect (100,Screen.height - 50,80,50), btnRight_tex)) {
+				moveLeft = false;
+				moveRight = true;
+			} else {
+				moveRight = false;
+			}
 
-		if (GUI.RepeatButton (new Rect (10, 300, 50, 50), btnLeft_tex)) {
-			moveRight = false;
-			moveLeft = true;
-		} else {
-			moveLeft = false;
-		}
-
-		if (GUI.RepeatButton (new Rect (80, 300, 50, 50), btnRight_tex)) {
-			moveLeft = false;
-			moveRight = true;
-		} else {
-			moveRight = false;
-		}
-
-		if (GUI.Button (new Rect (1100, 300, 50, 50), btnJump_tex)) {
-			doJump = true;
-		} else {
-			doJump = false;
+			if (GUI.Button (new Rect (Screen.width - 100,Screen.height - 50,80,50), btnJump_tex)) {
+				doJump = true;
+			} else {
+				doJump = false;
+			}
 		}
 	}
 	// Update is called once per frame
@@ -131,19 +131,19 @@ public class PlayerController : MonoBehaviour {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
-			if (moveRight || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+			if ((IsPlayer && moveRight) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
 				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Right;
 			}
 
 			//check if going LEFT
-			if (moveLeft || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+			if ((IsPlayer && moveLeft) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
 				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Left;
 			}
 
 			//check if JUMP
-			if (doJump || IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
+			if ((IsPlayer && doJump) || IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
 				IsJumping = true;
 				CanJump = false;
 				vElapsedHeight = 0f;
@@ -421,8 +421,15 @@ public class PlayerController : MonoBehaviour {
 			}	
 		}
 	}
-}
 
+	void OnCollisionEnter2D(Collision2D collision) {
+		//triggers when two rigidbody object collide
+		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
+			Application.LoadLevel (Application.loadedLevel);
+		}
+	}
+
+}
 
 
 

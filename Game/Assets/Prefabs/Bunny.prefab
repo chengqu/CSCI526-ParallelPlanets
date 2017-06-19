@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 61868713877589832}
   - component: {fileID: 95766450700911630}
   - component: {fileID: 114593434986198194}
+  - component: {fileID: 114787600239791558}
   m_Layer: 0
   m_Name: Bunny
   m_TagString: Untagged
@@ -107,6 +108,8 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -142,9 +145,20 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
+  m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.034165323}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.2, y: 2.01}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 1.2, y: 1.9416693}
+  m_EdgeRadius: 0
 --- !u!81 &81239746590322104
 AudioListener:
   m_ObjectHideFlags: 1
@@ -187,18 +201,61 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214eb4a67284240c687b5c62ce1f7de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btnLeft_tex: {fileID: 0}
+  btnRight_tex: {fileID: 0}
+  btnJump_tex: {fileID: 0}
+  moveSpeed: 5
+  jumpForce: 50
+  WalkingDirection: 0
   vPlanetList: []
+  vCurPlanet: {fileID: 0}
+  vCurField: {fileID: 0}
   vJumpHeight: 1
   vJumpSpeed: 2
   vDistanceGround: 0.3
   vWalkSpeed: 3
+  CanJump: 1
+  CanJumpOnOtherPlanets: 1
+  vElapsedHeight: 0
+  IsJumping: 0
+  IsReadyToChange: 0
   vCanMove: 1
   CanWalkOnPlateform: 0
   IsAutoWalking: 0
   IsPlayer: 1
-  CanJump: 1
-  CanJumpOnOtherPlanets: 1
+--- !u!114 &114787600239791558
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1429546184279774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7abd92c754c7147128e52d12c6f40fb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vDistanceGround: 0.3
+  vWalkSpeed: 2
+  vJumpSpeed: 2
+  vJumpHeight: 0.5
+  vHP: 10
+  CanJumpOnOtherPlanets: 0
+  IsPlayer: 0
+  IsAutoWalking: 0
+  CanWalkOnPlateform: 0
+  vImpactSound: {fileID: 0}
   WalkingDirection: 0
+  LastDirection: 0
+  LeftWalkAnimationList: []
+  RightWalkAnimationList: []
+  WeaponList: []
+  CurrentWeaponIndex: 0
+  vProjectile: {fileID: 0}
+  vSpawningPool: []
+  vSpawningTime: 0
+  vCanMove: 1
+  vWeaponObj: {fileID: 0}
+  vCanUseWeapon: 0
   vCurPlanet: {fileID: 0}
 --- !u!124 &124966014996149814
 Behaviour:
@@ -237,8 +294,13 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: bb816d5be01e0478099847bbc995237b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
