@@ -679,7 +679,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -758,7 +758,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1070738358}
   - component: {fileID: 1070738357}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RockSpawnPoint (1)
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
@@ -779,7 +779,7 @@ MonoBehaviour:
   prefabToSpawn: {fileID: 4674873395337590, guid: 492d8a7a1bd0949c0b88ab06ed19e2cd,
     type: 2}
   spawnRate: 1
-  randomDelay: 5
+  randomDelay: 0.1
 --- !u!4 &1070738358
 Transform:
   m_ObjectHideFlags: 0
@@ -962,7 +962,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1082084942}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.42, y: 3.34, z: 0}
+  m_LocalPosition: {x: 2.3, y: 3.17, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1495,6 +1495,15 @@ Prefab:
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1827658254695168, guid: 643cc415a489d43f38edd7be52d6c390, type: 2}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114364278232343162, guid: 643cc415a489d43f38edd7be52d6c390,
+        type: 2}
+      propertyPath: randomDelay
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 643cc415a489d43f38edd7be52d6c390, type: 2}
   m_IsPrefabParent: 0
@@ -1618,7 +1627,7 @@ GameObject:
   - component: {fileID: 1982330719}
   - component: {fileID: 1982330720}
   - component: {fileID: 1982330721}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Volcano
   m_TagString: Untagged
   m_Icon: {fileID: 0}
