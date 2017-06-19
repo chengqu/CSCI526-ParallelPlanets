@@ -419,6 +419,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {
+		//triggers when two rigidbody object collide
 		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
 			Application.LoadLevel (Application.loadedLevel);
 		}
