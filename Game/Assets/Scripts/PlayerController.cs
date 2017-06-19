@@ -417,8 +417,14 @@ public class PlayerController : MonoBehaviour {
 			}	
 		}
 	}
-}
 
+	void OnCollisionEnter2D(Collision2D collision) {
+		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
+			Application.LoadLevel (Application.loadedLevel);
+		}
+	}
+
+}
 
 
 
