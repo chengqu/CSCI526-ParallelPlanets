@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using CnControls;
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -39,10 +39,10 @@ public class PlayerController : MonoBehaviour {
     public bool CanWalkOnPlateform = false;     //check if it can jump on plateform. Prevent Clouds from getting higher when passing above the plateform
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
-	
+
+	public bool isDie = false;
 
     //private variables
-	private bool moveLeft, moveRight, doJump = false;
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
 	private Vector3 pos;                        //init the position as a 3d vector
@@ -100,53 +100,35 @@ public class PlayerController : MonoBehaviour {
         //set the parent of the player the planet he's currently on
 		//transform.parent = vCurPlanet.transform;
 	}
-
-	public void OnGUI(){
-		if (IsPlayer) {
-			if (GUI.RepeatButton (new Rect (0,Screen.height - 50,80,50), btnLeft_tex)) {
-				moveRight = false;
-				moveLeft = true;
-			} else {
-				moveLeft = false;
-			}
-			if (GUI.RepeatButton (new Rect (100,Screen.height - 50,80,50), btnRight_tex)) {
-				moveLeft = false;
-				moveRight = true;
-			} else {
-				moveRight = false;
-			}
-
-			if (GUI.Button (new Rect (Screen.width - 100,Screen.height - 50,80,50), btnJump_tex)) {
-				doJump = true;
-			}
-		}
-	}
+		
 	// Update is called once per frame
 	void Update () {
 
+		if (isDie) {
+			Die ();
+		}
 		//check if this character can move freely or it's disabled
 		if (vCanMove) {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
-			if ((IsPlayer && moveRight) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
 				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Right;
 			}
 
 			//check if going LEFT
-			if ((IsPlayer && moveLeft) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
 				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Left;
 			}
 
 			//check if JUMP
-			if ((IsPlayer && doJump) || IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
+			if ((IsPlayer && CnInputManager.GetButtonDown("Jump")) || IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
 				IsJumping = true;
 				CanJump = false;
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
-				doJump = false;
 			}
 
 			//check if the character is walking
@@ -420,13 +402,9 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D collision) {
-		//triggers when two rigidbody object collide
-		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
-			Application.LoadLevel (Application.loadedLevel);
-		}
+	void Die() {
+		Application.LoadLevel (Application.loadedLevel);
 	}
-
 }
 
 
