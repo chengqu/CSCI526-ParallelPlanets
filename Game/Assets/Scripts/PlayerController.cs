@@ -102,6 +102,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void OnGUI(){
+        //gui function to draw the buttons
 		if (IsPlayer) {
 			if (GUI.RepeatButton (new Rect (0,Screen.height - 50,80,50), btnLeft_tex)) {
 				moveRight = false;
@@ -116,16 +117,25 @@ public class PlayerController : MonoBehaviour {
 				moveRight = false;
 			}
 
-			if (GUI.Button (new Rect (Screen.width - 100,Screen.height - 50,80,50), btnJump_tex)) {
-				doJump = true;
-			}
+			//if (GUI.Button (new Rect (Screen.width - 100,Screen.height - 50,80,50), btnJump_tex)) {
+			//	doJump = true;
+			//}
 		}
 	}
 	// Update is called once per frame
 	void Update () {
 
-		//check if this character can move freely or it's disabled
-		if (vCanMove) {
+        Touch[] myTouches = Input.touches;
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            if(myTouches[i].position.x > Screen.width)
+            {
+                doJump = true;
+            }
+        }
+
+        //check if this character can move freely or it's disabled
+        if (vCanMove) {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
