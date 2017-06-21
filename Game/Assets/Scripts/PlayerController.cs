@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CnControls;
+using UnityEngine.UI;
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -64,9 +65,20 @@ public class PlayerController : MonoBehaviour {
 	private Rigidbody2D myRigidBody;            //player's rigid body
 	private SpriteRenderer myRenderer;          //player's sprite renderer
 
-
+	//healthbar
+	public Slider healthBar;
+	public float curHealth = 100;
+	private float maxHealth = 100;
+	public void Damage(float damage) {
+		curHealth -= damage;
+		healthBar.value = curHealth/maxHealth;
+		if (curHealth <= 0) {
+			isDie = true;
+		}
+	}
 	// Use this for initialization
 	void Start () {
+		healthBar.value = curHealth/maxHealth;
 		findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
