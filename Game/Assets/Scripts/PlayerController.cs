@@ -7,13 +7,6 @@ public class PlayerController : MonoBehaviour {
 	public bool findTarget = false;
 
     //public variables
-	//mobile controller variables
-	public Texture btnLeft_tex;
-	public Texture btnRight_tex;
-	public Texture btnJump_tex;
-	public GUI btnLeft;
-	public GUI btnRight;
-	public GUI btnJump;
 
 	public float moveSpeed = 5f;
 	public float jumpForce = 50f;
@@ -107,8 +100,10 @@ public class PlayerController : MonoBehaviour {
 		if (isDie) {
 			Die ();
 		}
-		//check if this character can move freely or it's disabled
-		if (vCanMove) {
+
+
+        //check if this character can move freely or it's disabled
+        if (vCanMove) {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
