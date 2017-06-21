@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour {
 		vCurPlanet = vNewPlanet;
         vCurField = vNewPlanet.transform.parent.gameObject;
         //set the parent of the player the planet he's currently on
-		//transform.parent = vCurPlanet.transform;
+		transform.parent = vCurPlanet.transform;
 	}
 		
 	// Update is called once per frame
