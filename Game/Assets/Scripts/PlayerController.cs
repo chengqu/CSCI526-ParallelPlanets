@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			//check if JUMP
-			if ((IsPlayer && CnInputManager.GetButtonDown("Jump")) || IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
+			if ( (IsPlayer && (CnInputManager.GetButtonDown("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
 				IsJumping = true;
 				CanJump = false;
 				vElapsedHeight = 0f;
@@ -399,6 +399,13 @@ public class PlayerController : MonoBehaviour {
 					vPlanetList.Remove (child.gameObject);
 				}
 			}	
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D collision) {
+		//triggers when two rigidbody object collide
+		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
+			isDie = true;
 		}
 	}
 
