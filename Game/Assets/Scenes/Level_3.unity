@@ -426,6 +426,26 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: LeftWalkAnimationList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114593434986198194, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: LeftWalkAnimationList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: RightWalkAnimationList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114593434986198194, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: RightWalkAnimationList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4389555057587334, guid: 56165fa38fbc24e86a5f5e4789a0458e, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0.95
@@ -462,7 +482,71 @@ Prefab:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 20695768364381510, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: m_NormalizedViewPortRect.width
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20695768364381510, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: m_NormalizedViewPortRect.height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: LeftWalkAnimationList.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: bb816d5be01e0478099847bbc995237b,
+        type: 3}
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: LeftWalkAnimationList.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 3512914f8ed9f4d13887e782e8512e63,
+        type: 3}
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: RightWalkAnimationList.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: bb816d5be01e0478099847bbc995237b,
+        type: 3}
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: RightWalkAnimationList.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 3512914f8ed9f4d13887e782e8512e63,
+        type: 3}
+    - target: {fileID: 114787600239791558, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114593434986198194, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: LeftWalkAnimationList.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: 9e7dce14f3be12b44bb3f388b204e6f9,
+        type: 3}
+    - target: {fileID: 114593434986198194, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: RightWalkAnimationList.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: bb816d5be01e0478099847bbc995237b,
+        type: 3}
+    - target: {fileID: 114593434986198194, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: RightWalkAnimationList.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 3512914f8ed9f4d13887e782e8512e63,
+        type: 3}
+    - target: {fileID: 114593434986198194, guid: 56165fa38fbc24e86a5f5e4789a0458e,
+        type: 2}
+      propertyPath: LeftWalkAnimationList.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 6710b25d80bbffc43bbb5bffe60291c0,
+        type: 3}
+    m_RemovedComponents:
+    - {fileID: 95766450700911630, guid: 56165fa38fbc24e86a5f5e4789a0458e, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 56165fa38fbc24e86a5f5e4789a0458e, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1652794343

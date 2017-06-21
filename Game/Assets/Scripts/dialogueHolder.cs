@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class dialogueHolder : MonoBehaviour {
 
-	public string dialogue = "Hi,Bunny";
+	public string dialogue = "Hi,Bunny...I need Cherry";
 	private DialogueManager dMAn;
 	public PlayerController bunny;
 	// Use this for initialization
@@ -22,9 +22,9 @@ public class dialogueHolder : MonoBehaviour {
 		if (col.transform.tag == "Player") {
 
 			if (bunny.findTarget) {
-				dMAn.ShowBox ("YOU WIN");
+				dMAn.ShowBox ("Thank you, bunny! YOU WIN");
 			}
-			else if (Input.GetKeyUp (KeyCode.Space)) {
+			else {
 				dMAn.ShowBox (dialogue);
 			}
 		}
