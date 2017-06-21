@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CnControls;
+using UnityEngine.UI;
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -33,12 +34,22 @@ public class PlayerController : MonoBehaviour {
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
 
+
+    public List<Sprite> LeftWalkAnimationList;
+    public List<Sprite> RightWalkAnimationList;
+
+    //private variables
+    private bool moveLeft, moveRight, doJump = false;
+
 	public bool isDie = false;
 
     //private variables
+
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
-	private Vector3 pos;                        //init the position as a 3d vector
+    private int vCurrentFrame = 0;
+    
+    private Vector3 pos;                        //init the position as a 3d vector
 	private Quaternion rotation;                //init the rotation of player
 
 	private float vCenterDist;                  //the dist between player center to the ground
@@ -54,9 +65,20 @@ public class PlayerController : MonoBehaviour {
 	private Rigidbody2D myRigidBody;            //player's rigid body
 	private SpriteRenderer myRenderer;          //player's sprite renderer
 
-
+	//healthbar
+	public Slider healthBar;
+	public float curHealth = 100;
+	private float maxHealth = 100;
+	public void Damage(float damage) {
+		curHealth -= damage;
+		healthBar.value = curHealth/maxHealth;
+		if (curHealth <= 0) {
+			isDie = true;
+		}
+	}
 	// Use this for initialization
 	void Start () {
+		healthBar.value = curHealth/maxHealth;
 		findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
@@ -82,6 +104,7 @@ public class PlayerController : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(vOriginalRotation);
 
 		IsReadyToChange = false;
+        UpdateCharacterAnimation();
     }
 
 	//change current planet
@@ -91,7 +114,7 @@ public class PlayerController : MonoBehaviour {
 		vCurPlanet = vNewPlanet;
         vCurField = vNewPlanet.transform.parent.gameObject;
         //set the parent of the player the planet he's currently on
-		//transform.parent = vCurPlanet.transform;
+		transform.parent = vCurPlanet.transform;
 	}
 		
 	// Update is called once per frame
@@ -140,7 +163,7 @@ public class PlayerController : MonoBehaviour {
 								//increase time
 								elapseanimation += Time.deltaTime;
 								if (elapseanimation >= animationSpeed) {
-									//UpdateCharacterAnimation ();
+									UpdateCharacterAnimation ();
 									elapseanimation = 0f;
 								}
 			}
@@ -319,6 +342,7 @@ public class PlayerController : MonoBehaviour {
 				vCurPlanet = vPlanet;
 				//make sure the character scale isn't changed between planets
 				transform.parent = vCurPlanet.transform;
+				vCurField = vCurPlanet.transform.parent.gameObject;
 			}
 	}
 
@@ -340,25 +364,6 @@ public class PlayerController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
-//
-//	void UpdateCharacterAnimation()
-//	{
-//		//get the right list ot use
-//		List<Sprite> vCurAnimList; 
-//		if (WalkingDirection == PG_Direction.Right)
-//			vCurAnimList = RightWalkAnimationList;
-//		else
-//			vCurAnimList = LeftWalkAnimationList;
-//
-//		if (vCurrentFrame + 1 >= vCurAnimList.Count)
-//			vCurrentFrame = 0;
-//		else
-//			vCurrentFrame++;
-//
-//		//then change the sprite correctly
-//		if (vCurAnimList.Count > 0)
-//			vRenderer.sprite = vCurAnimList[vCurrentFrame];
-//	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
@@ -372,7 +377,6 @@ public class PlayerController : MonoBehaviour {
             //if the colider is GravityField
             //add this planet
             if (col.gameObject != vCurField){
-                vCurField = col.gameObject;
                 foreach (Transform child in col.gameObject.transform) {
                     if (child.gameObject.tag == "Planet" && !vPlanetList.Contains(child.gameObject)) {
                         vPlanetList.Add(child.gameObject);
@@ -404,9 +408,31 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
+
+    void UpdateCharacterAnimation()
+    {
+        //get the right list ot use
+        List<Sprite> vCurAnimList;
+        if (WalkingDirection == Walk_Direction.Right)
+            vCurAnimList = RightWalkAnimationList;
+        else
+            vCurAnimList = LeftWalkAnimationList;
+
+        if (vCurrentFrame + 1 >= vCurAnimList.Count)
+            vCurrentFrame = 0;
+        else
+            vCurrentFrame++;
+
+        //then change the sprite correctly
+        if (vCurAnimList.Count > 0)
+            myRenderer.sprite = vCurAnimList[vCurrentFrame];
+    }
+
+
 	void Die() {
 		Application.LoadLevel (Application.loadedLevel);
 	}
+
 }
 
 

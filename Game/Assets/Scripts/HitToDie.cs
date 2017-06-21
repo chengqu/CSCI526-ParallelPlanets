@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HitToDie : MonoBehaviour {
 	public PlayerController bunny;
+	public float damage = 20;
 	// Use this for initialization
 	void Start () {
 		
@@ -16,13 +17,13 @@ public class HitToDie : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col) {
 		if (col.transform.tag == "Player") {
-			bunny.isDie = true;
+			bunny.Damage (damage);
 		}
 	}
 
 	void OnCollisionEnter2D (Collider2D col) {
 		if (col.transform.tag == "Player") {
-			bunny.isDie = true;
+			bunny.Damage (damage);
 		}
 	}
 }

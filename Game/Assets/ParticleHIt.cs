@@ -13,4 +13,7 @@ public class ParticleHIt : MonoBehaviour {
 	void Update () {
 		
 	}
+
+	void OnParticleCollision () {
+	}
 }

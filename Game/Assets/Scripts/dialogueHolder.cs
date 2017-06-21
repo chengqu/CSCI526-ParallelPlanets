@@ -23,10 +23,15 @@ public class dialogueHolder : MonoBehaviour {
 
 			if (bunny.findTarget) {
 				dMAn.ShowBox ("Thank you, bunny! YOU WIN");
+				Invoke("win", 2);
 			}
 			else {
 				dMAn.ShowBox (dialogue);
 			}
 		}
+	}
+
+	void win() {
+		Application.LoadLevel ("StartScene");
 	}
 }
