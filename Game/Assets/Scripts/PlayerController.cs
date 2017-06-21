@@ -33,17 +33,17 @@ public class PlayerController : MonoBehaviour {
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
 
-<<<<<<< HEAD
+
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
 
     //private variables
     private bool moveLeft, moveRight, doJump = false;
-=======
+
 	public bool isDie = false;
 
     //private variables
->>>>>>> 40b4ab3bf6bb062dc284546a226e6e652d0fd8c6
+
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
     private int vCurrentFrame = 0;
@@ -415,7 +415,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-<<<<<<< HEAD
+
     void UpdateCharacterAnimation()
     {
         //get the right list ot use
@@ -435,11 +435,11 @@ public class PlayerController : MonoBehaviour {
             myRenderer.sprite = vCurAnimList[vCurrentFrame];
     }
 
-=======
+
 	void Die() {
 		Application.LoadLevel (Application.loadedLevel);
 	}
->>>>>>> 40b4ab3bf6bb062dc284546a226e6e652d0fd8c6
+
 }
 
 
