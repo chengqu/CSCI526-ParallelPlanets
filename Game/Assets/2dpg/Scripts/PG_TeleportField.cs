@@ -142,7 +142,7 @@ public class PG_TeleportField : MonoBehaviour {
 			}
 
 			//go back to it's original 
-			vObj.transform.localScale = new Vector3 (1f, 1f, 1f);
+			vObj.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 		}
 	}
 
