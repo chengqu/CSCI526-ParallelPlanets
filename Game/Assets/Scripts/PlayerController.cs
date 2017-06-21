@@ -330,6 +330,7 @@ public class PlayerController : MonoBehaviour {
 				vCurPlanet = vPlanet;
 				//make sure the character scale isn't changed between planets
 				transform.parent = vCurPlanet.transform;
+				vCurField = vCurPlanet.transform.parent.gameObject;
 			}
 	}
 
@@ -351,25 +352,6 @@ public class PlayerController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
-//
-//	void UpdateCharacterAnimation()
-//	{
-//		//get the right list ot use
-//		List<Sprite> vCurAnimList; 
-//		if (WalkingDirection == PG_Direction.Right)
-//			vCurAnimList = RightWalkAnimationList;
-//		else
-//			vCurAnimList = LeftWalkAnimationList;
-//
-//		if (vCurrentFrame + 1 >= vCurAnimList.Count)
-//			vCurrentFrame = 0;
-//		else
-//			vCurrentFrame++;
-//
-//		//then change the sprite correctly
-//		if (vCurAnimList.Count > 0)
-//			vRenderer.sprite = vCurAnimList[vCurrentFrame];
-//	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
@@ -383,7 +365,6 @@ public class PlayerController : MonoBehaviour {
             //if the colider is GravityField
             //add this planet
             if (col.gameObject != vCurField){
-                vCurField = col.gameObject;
                 foreach (Transform child in col.gameObject.transform) {
                     if (child.gameObject.tag == "Planet" && !vPlanetList.Contains(child.gameObject)) {
                         vPlanetList.Add(child.gameObject);
