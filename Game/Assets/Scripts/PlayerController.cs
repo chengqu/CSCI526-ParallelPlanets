@@ -39,13 +39,17 @@ public class PlayerController : MonoBehaviour {
     public bool CanWalkOnPlateform = false;     //check if it can jump on plateform. Prevent Clouds from getting higher when passing above the plateform
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
-	
+
+    public List<Sprite> LeftWalkAnimationList;
+    public List<Sprite> RightWalkAnimationList;
 
     //private variables
-	private bool moveLeft, moveRight, doJump = false;
+    private bool moveLeft, moveRight, doJump = false;
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
-	private Vector3 pos;                        //init the position as a 3d vector
+    private int vCurrentFrame = 0;
+    
+    private Vector3 pos;                        //init the position as a 3d vector
 	private Quaternion rotation;                //init the rotation of player
 
 	private float vCenterDist;                  //the dist between player center to the ground
@@ -89,6 +93,7 @@ public class PlayerController : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(vOriginalRotation);
 
 		IsReadyToChange = false;
+        UpdateCharacterAnimation();
     }
 
 	//change current planet
@@ -163,7 +168,7 @@ public class PlayerController : MonoBehaviour {
 								//increase time
 								elapseanimation += Time.deltaTime;
 								if (elapseanimation >= animationSpeed) {
-									//UpdateCharacterAnimation ();
+									UpdateCharacterAnimation ();
 									elapseanimation = 0f;
 								}
 			}
@@ -426,6 +431,25 @@ public class PlayerController : MonoBehaviour {
 			Application.LoadLevel (Application.loadedLevel);
 		}
 	}
+
+    void UpdateCharacterAnimation()
+    {
+        //get the right list ot use
+        List<Sprite> vCurAnimList;
+        if (WalkingDirection == Walk_Direction.Right)
+            vCurAnimList = RightWalkAnimationList;
+        else
+            vCurAnimList = LeftWalkAnimationList;
+
+        if (vCurrentFrame + 1 >= vCurAnimList.Count)
+            vCurrentFrame = 0;
+        else
+            vCurrentFrame++;
+
+        //then change the sprite correctly
+        if (vCurAnimList.Count > 0)
+            myRenderer.sprite = vCurAnimList[vCurrentFrame];
+    }
 
 }
 
