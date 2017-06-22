@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour {
 
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
+    public List<Sprite> DieAnimationList;
+    public List<Sprite> JumpAnimationList;
 
     //private variables
     private bool moveLeft, moveRight, doJump = false;
@@ -109,7 +111,10 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 
 		if (isDie) {
-			Die ();
+
+            UpdateCharacterAnimation();
+      
+            Die ();
 		}
 
 
@@ -135,7 +140,8 @@ public class PlayerController : MonoBehaviour {
 				CanJump = false;
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
-			}
+                UpdateCharacterAnimation();
+            }
 
 			//check if the character is walking
 			if (pos != Vector3.zero)
@@ -158,7 +164,8 @@ public class PlayerController : MonoBehaviour {
 
 
 		}
-	}
+       
+    }
 
 
 	void FixedUpdate () {
@@ -351,25 +358,7 @@ public class PlayerController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
-//
-//	void UpdateCharacterAnimation()
-//	{
-//		//get the right list ot use
-//		List<Sprite> vCurAnimList; 
-//		if (WalkingDirection == PG_Direction.Right)
-//			vCurAnimList = RightWalkAnimationList;
-//		else
-//			vCurAnimList = LeftWalkAnimationList;
-//
-//		if (vCurrentFrame + 1 >= vCurAnimList.Count)
-//			vCurrentFrame = 0;
-//		else
-//			vCurrentFrame++;
-//
-//		//then change the sprite correctly
-//		if (vCurAnimList.Count > 0)
-//			vRenderer.sprite = vCurAnimList[vCurrentFrame];
-//	}
+
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
@@ -425,6 +414,16 @@ public class PlayerController : MonoBehaviour {
         else
             vCurAnimList = LeftWalkAnimationList;
 
+        if (IsJumping )
+            vCurAnimList = JumpAnimationList;
+
+        if (isDie)
+        {
+            vCurAnimList = DieAnimationList;
+           
+        }
+            
+
         if (vCurrentFrame + 1 >= vCurAnimList.Count)
             vCurrentFrame = 0;
         else
@@ -437,7 +436,13 @@ public class PlayerController : MonoBehaviour {
 
 
 	void Die() {
-		Application.LoadLevel (Application.loadedLevel);
+
+        
+            StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
+            {
+                Application.LoadLevel(Application.loadedLevel);
+            }, 2.0f));
+        
 	}
 
 }
