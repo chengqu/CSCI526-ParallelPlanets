@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CnControls;
+using UnityEngine.UI;
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -66,9 +67,20 @@ public class PlayerController : MonoBehaviour {
 	private Rigidbody2D myRigidBody;            //player's rigid body
 	private SpriteRenderer myRenderer;          //player's sprite renderer
 
-
+	//healthbar
+	public Slider healthBar;
+	public float curHealth = 100;
+	private float maxHealth = 100;
+	public void Damage(float damage) {
+		curHealth -= damage;
+		healthBar.value = curHealth/maxHealth;
+		if (curHealth <= 0) {
+			isDie = true;
+		}
+	}
 	// Use this for initialization
 	void Start () {
+		healthBar.value = curHealth/maxHealth;
 		findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
@@ -104,7 +116,7 @@ public class PlayerController : MonoBehaviour {
 		vCurPlanet = vNewPlanet;
         vCurField = vNewPlanet.transform.parent.gameObject;
         //set the parent of the player the planet he's currently on
-		//transform.parent = vCurPlanet.transform;
+		transform.parent = vCurPlanet.transform;
 	}
 		
 	// Update is called once per frame
@@ -337,6 +349,7 @@ public class PlayerController : MonoBehaviour {
 				vCurPlanet = vPlanet;
 				//make sure the character scale isn't changed between planets
 				transform.parent = vCurPlanet.transform;
+				vCurField = vCurPlanet.transform.parent.gameObject;
 			}
 	}
 
@@ -372,7 +385,6 @@ public class PlayerController : MonoBehaviour {
             //if the colider is GravityField
             //add this planet
             if (col.gameObject != vCurField){
-                vCurField = col.gameObject;
                 foreach (Transform child in col.gameObject.transform) {
                     if (child.gameObject.tag == "Planet" && !vPlanetList.Contains(child.gameObject)) {
                         vPlanetList.Add(child.gameObject);
