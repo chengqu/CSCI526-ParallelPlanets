@@ -21,9 +21,9 @@ public class HitToDie : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D (Collider2D col) {
-		if (col.transform.tag == "Player") {
-			bunny.Damage (damage);
-		}
-	}
+//	void OnCollisionEnter2D (Collider2D col) {
+//		if (col.transform.tag == "Player") {
+//			bunny.Damage (damage);
+//		}
+//	}
 }

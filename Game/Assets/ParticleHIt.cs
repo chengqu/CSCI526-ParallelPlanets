@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ParticleHIt : MonoBehaviour {
 
+	public PlayerController bunny;
 	// Use this for initialization
 	void Start () {
 		
@@ -14,6 +15,9 @@ public class ParticleHIt : MonoBehaviour {
 		
 	}
 
-	void OnParticleCollision () {
+	void OnParticleCollision (GameObject other) {
+		if (other.tag == "Player") {
+			bunny.Damage (20);
+		}
 	}
 }
