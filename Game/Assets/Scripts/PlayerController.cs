@@ -45,6 +45,9 @@ public class PlayerController : MonoBehaviour {
 
 	public bool isDie = false;
 
+	public AudioSource jumpSfx;
+	public AudioSource deathSfx;
+
     //private variables
 
     private float elapseanimation = 0f;         //elapsed walking animation
@@ -155,6 +158,7 @@ public class PlayerController : MonoBehaviour {
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
                 UpdateCharacterAnimation();
+				jumpSfx.Play ();
             }
 
 			//check if the character is walking
@@ -451,7 +455,7 @@ public class PlayerController : MonoBehaviour {
 
 	void Die() {
 
-        
+		deathSfx.Play ();
             StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
             {
                 Application.LoadLevel(Application.loadedLevel);
