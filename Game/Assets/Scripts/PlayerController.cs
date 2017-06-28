@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
-		healthBar.value = curHealth/maxHealth;
+		
 		findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
@@ -107,6 +107,8 @@ public class PlayerController : MonoBehaviour {
 
 		IsReadyToChange = false;
         UpdateCharacterAnimation();
+
+		healthBar.value = curHealth/maxHealth;
     }
 
 	//change current planet

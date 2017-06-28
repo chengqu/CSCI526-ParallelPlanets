@@ -38,6 +38,15 @@ public class PG_TeleportField : MonoBehaviour {
 		}
 	}
 
+	void OnParticleCollision(GameObject other)
+	{
+		//check if it's the other faction
+		if (other.tag == "fire" && vLinkedObj != null) {
+
+			StartCoroutine (TeleportPlayerEffect (other));
+		}
+	}
+
 	void ToggleComponentsObj(GameObject vObj, bool vChoice, GameObject vNewPlanet = null)
 	{
 		//character
