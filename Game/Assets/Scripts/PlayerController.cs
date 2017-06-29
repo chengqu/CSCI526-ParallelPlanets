@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using CnControls;
 using UnityEngine.UI;
+using AssemblyCSharp;
+
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -40,15 +42,20 @@ public class PlayerController : MonoBehaviour {
     public List<Sprite> DieAnimationList;
     public List<Sprite> JumpAnimationList;
 
+    public List<PG_Weapons> WeaponList;                         //we handle all the weapons that will be used for the character here
+    public int CurrentWeaponIndex = 0;
+    public GameObject vProjectile;								//hold a projectile to shoot
+    public GameObject vWeaponObj;
+    public bool vCanUseWeapon = false;
+
+    public bool isDead = false;
+
+    public AudioSource jumpSfx;
+    public AudioSource deathSfx;
+
     //private variables
     private bool moveLeft, moveRight, doJump = false;
-
-	public bool isDie = false;
-
-	public AudioSource jumpSfx;
-	public AudioSource deathSfx;
-
-    //private variables
+    private SpriteRenderer vWeaponRenderer;
 
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
@@ -69,22 +76,41 @@ public class PlayerController : MonoBehaviour {
 	private GameObject vCircleCollider;         //player's circle collider
 	private Rigidbody2D myRigidBody;            //player's rigid body
 	private SpriteRenderer myRenderer;          //player's sprite renderer
+    private Quaternion vStartingRotation;
 
-	//healthbar
-	public Slider healthBar;
+    //healthbar
+    public Slider healthBar;
 	public float curHealth = 100;
 	private float maxHealth = 100;
+
+
 	public void Damage(float damage) {
 		curHealth -= damage;
 		healthBar.value = curHealth/maxHealth;
 		if (curHealth <= 0) {
-			isDie = true;
+			isDead = true;
 		}
 	}
 	// Use this for initialization
 	void Start () {
-		
-		findTarget = false;
+
+        CurrentWeaponIndex = 0;
+
+        //check if we use the weapon list
+        if (WeaponList.Count > 0)
+        {
+
+            //get the renderer
+            vWeaponRenderer = vWeaponObj.GetComponent<SpriteRenderer>();
+
+            //keep in memory the local rotation
+            vStartingRotation = vWeaponObj.transform.localRotation;
+
+            //change its weapon
+            ChangeWeapon(CurrentWeaponIndex);
+        }
+
+        findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		vCurPlanet = null;
@@ -127,7 +153,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (isDie) {
+		if (isDead) {
 
             UpdateCharacterAnimation();
       
@@ -359,7 +385,45 @@ public class PlayerController : MonoBehaviour {
 			}
 	}
 
-	void RotateObj(string vDirection)
+    public void ChangeWeapon(int vNewWeaponIndex)
+    {
+        //change its weapon index then changing the weapon
+        CurrentWeaponIndex = vNewWeaponIndex;
+
+        //change the weapon for this one
+        vWeaponRenderer.sprite = WeaponList[CurrentWeaponIndex].vSprite;
+
+        //change its rotation by default to look forward.
+        vWeaponObj.transform.localRotation = vStartingRotation;
+    }
+
+    //check if we rotate or not
+    bool CanRotate(float angle)
+    {
+        bool vCanRotate = false;
+
+        if (!WeaponList[CurrentWeaponIndex].UseGravity)
+        {
+
+            //get the player rotation
+            angle = angle - transform.rotation.eulerAngles.z;
+
+            //make sure the calculated angle is in the 180f/-180f range.
+            if (angle < -180f)
+                angle += 360f;
+            if (angle > 180f)
+                angle -= 360f;
+
+            //cannot rotate gun behind character.
+            if (angle <= 85f && angle >= -85f)
+                vCanRotate = true;
+        }
+
+        return vCanRotate;
+    }
+
+
+    void RotateObj(string vDirection)
 	{
 		//initialise variable
 		float RotateByAngle = 0f;
@@ -418,7 +482,7 @@ public class PlayerController : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D collision) {
 		//triggers when two rigidbody object collide
 		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
-			isDie = true;
+			isDead = true;
 		}
 	}
 
@@ -435,7 +499,7 @@ public class PlayerController : MonoBehaviour {
         if (IsJumping )
             vCurAnimList = JumpAnimationList;
 
-        if (isDie)
+        if (isDead)
         {
             vCurAnimList = DieAnimationList;
            
