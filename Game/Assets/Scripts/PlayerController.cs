@@ -5,6 +5,7 @@ using CnControls;
 using UnityEngine.UI;
 using AssemblyCSharp;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -88,6 +89,12 @@ public class PlayerController : MonoBehaviour {
 	public float curHealth = 100;
 	private float maxHealth = 100;
 
+	// jetcraft variable
+	private bool JetCraft = false;
+	private float currentAmount = 0;
+	private float speed = 5;
+	private float MovementSpeed = 1f;
+	public Vector3 testV3;
 
 	public void Damage(float damage) {
 		hitSfx.Play ();
@@ -166,69 +173,90 @@ public class PlayerController : MonoBehaviour {
             Die ();
 		}
 
-
-        //check if this character can move freely or it's disabled
-        if (vCanMove) {
-			pos = Vector3.zero;
-
-			//check if going RIGHT
-			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
-				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
-				WalkingDirection = Walk_Direction.Right;
-			}
-
-			//check if going LEFT
-			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
-				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
-				WalkingDirection = Walk_Direction.Left;
-			}
-
-			//check if JUMP
-			if ( (IsPlayer && (CnInputManager.GetButtonDown("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
-				IsJumping = true;
+		if (JetCraft) {
+			if (currentAmount < 100) {
+				float vJetSpeed = 1f;
+				currentAmount += speed * Time.deltaTime;
+				//vJumpHeight = 3f;
 				CanJump = false;
-				vElapsedHeight = 0f;
-				IsReadyToChange = true;
-                UpdateCharacterAnimation();
-
-				if (jumpFlag) {
-					jumpSfx.Play ();
-				}
-				jumpFlag = true;
-            }
-
-			//check if the character is walking
-			if (pos != Vector3.zero)
-				IsWalking = true;
-			else
-				IsWalking = false;
-
-			//ONLY show walking animation when moving!
-			if (IsWalking) {
-				//move
-				transform.Translate (pos);
-				
-								//increase time
-								elapseanimation += Time.deltaTime;
-								if (elapseanimation >= animationSpeed) {
-									UpdateCharacterAnimation ();
-									elapseanimation = 0f;
-								}
+				// Just use CnInputManager. instead of Input. and you're good to go
+//				var inputVector = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+				Vector3 movementVector = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+				testV3 = movementVector;
+//				movementVector += Physics.gravity;
+//				_characterController.Move(movementVector * Time.deltaTime);
+				//pos += vJetSpeed * Time.deltaTime;
+				transform.Translate (movementVector * vJetSpeed * Time.deltaTime);
+			} else {
+				JetCraft = false;
+				vJumpHeight = 1f;
 			}
 
+		} else {
+			//check if this character can move freely or it's disabled
+			if (vCanMove) {
+				pos = Vector3.zero;
+
+				//check if going RIGHT
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
+					WalkingDirection = Walk_Direction.Right;
+				}
+
+				//check if going LEFT
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
+					WalkingDirection = Walk_Direction.Left;
+				}
+
+				//check if JUMP
+				if ((IsPlayer && (CnInputManager.GetButtonDown ("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
+					IsJumping = true;
+					CanJump = false;
+					vElapsedHeight = 0f;
+					IsReadyToChange = true;
+					UpdateCharacterAnimation ();
+
+					if (jumpFlag) {
+						jumpSfx.Play ();
+					}
+					jumpFlag = true;
+				}
+
+				//check if the character is walking
+				if (pos != Vector3.zero)
+					IsWalking = true;
+				else
+					IsWalking = false;
+
+				//ONLY show walking animation when moving!
+				if (IsWalking) {
+					//move
+					transform.Translate (pos);
+				
+					//increase time
+					elapseanimation += Time.deltaTime;
+					if (elapseanimation >= animationSpeed) {
+						UpdateCharacterAnimation ();
+						elapseanimation = 0f;
+					}
+				}
+
+
+			}
 
 		}
-       
     }
 
 
 	void FixedUpdate () {
         //update per frame, always keep the player down to a ground
+		if (!JetCraft) {
 			keepItDownDirectionPointToPlanet ();
-        if (vCurPlanet != null)
-        {
-            AddGravity(vCurPlanet);
-        }
+			if (vCurPlanet != null) {
+				AddGravity (vCurPlanet);
+			}
+		}
     }
 
     //TODO: need to fix the variables
@@ -459,6 +487,13 @@ public class PlayerController : MonoBehaviour {
 			Destroy (col.gameObject);
 			findTarget = true;
 		}
+
+		if (col.CompareTag ("JetCraftItem")) {
+			Destroy (col.gameObject);
+			JetCraft = true;
+			transform.parent = null;
+		}
+
         //triggers when colide with a gameobject
         if (col.tag == "GravityField")
         {
