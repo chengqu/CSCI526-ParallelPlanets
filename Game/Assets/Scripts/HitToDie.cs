@@ -18,6 +18,7 @@ public class HitToDie : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col) {
 		if (col.transform.tag == "Player") {
 			bunny.Damage (damage);
+            bunny.isDamage = true;
 		}
 	}
 

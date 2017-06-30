@@ -9,7 +9,7 @@ public class PG_Projectile : MonoBehaviour
 	public float vDistanceGround = 0.3f;									//distance of the ground
 	public float vWalkSpeed = 2f;											//how fast the projectile will go
 	public float vLifeTime = 2f;											//how long will it last until it disappear?
-	public PG_Character.PG_Direction vDirection = PG_Character.PG_Direction.Right;		//direction it will fly
+	public PlayerController.PG_Direction vDirection = PlayerController.PG_Direction.Right;		//direction it will fly
 	public bool vCanMove = false;											//prevent bullet from moving
 	public bool vUseGravity = true;											//will follow the planet shapes. 
 	public GameObject vImpactObj;											//put here the impact gameobject which will be spawned when the bullet die (explosion, spark, fire...)
@@ -33,7 +33,7 @@ public class PG_Projectile : MonoBehaviour
 		vRenderer = GetComponent<SpriteRenderer> ();
 		vAudioSource = GetComponent<AudioSource> ();
 
-		if (vDirection == PG_Character.PG_Direction.Left)
+		if (vDirection == PlayerController.PG_Direction.Left)
 			vRenderer.flipX = true;
 
 		//keep the rotation in mind
@@ -92,11 +92,11 @@ public class PG_Projectile : MonoBehaviour
 				Vector3 pos = Vector3.zero;
 
 				//check if going RIGHT
-				if (vDirection == PG_Character.PG_Direction.Right)
+				if (vDirection == PlayerController.PG_Direction.Right)
 					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 
 				//check if going LEFT
-				if (vDirection == PG_Character.PG_Direction.Left)
+				if (vDirection == PlayerController.PG_Direction.Left)
 					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 
 				//move forward the bullet
@@ -108,7 +108,7 @@ public class PG_Projectile : MonoBehaviour
 				}
 			} else {
 				//move forward the bullet
-				if (vDirection == PG_Character.PG_Direction.Right)
+				if (vDirection == PlayerController.PG_Direction.Right)
 					transform.Translate (Vector3.right * vWalkSpeed * Time.deltaTime);
 				else
 					transform.Translate (Vector3.left * vWalkSpeed * Time.deltaTime);
@@ -286,8 +286,8 @@ public class PG_Projectile : MonoBehaviour
 		if (!Disabled) {
 			//check if it's the other faction
 			if (col.tag == "Enemy") {
-				PG_Character vTargetChar = col.GetComponent<PG_Character> ();
-				vTargetChar.ReceiveDmg (vProjectileDmg);
+				PlayerController vTargetChar = col.GetComponent<PlayerController> ();
+				vTargetChar.Damage (vProjectileDmg);
 				SpawnImpact ();
 			} else if (!col.gameObject.GetComponent<PG_TeleportField> ())
 			if (col.tag == "Planet" || col.tag == "Plateform") {
