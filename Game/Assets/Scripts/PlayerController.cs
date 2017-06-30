@@ -209,15 +209,15 @@ public class PlayerController : MonoBehaviour {
 				pos = Vector3.zero;
 
 				//check if going RIGHT
-				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
 					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
-					WalkingDirection = Walk_Direction.Right;
+					WalkingDirection = PG_Direction.Right;
 				}
 
 				//check if going LEFT
-				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
 					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
-					WalkingDirection = Walk_Direction.Left;
+					WalkingDirection = PG_Direction.Left;
 				}
 					
 			//make sure were using the weapon list
