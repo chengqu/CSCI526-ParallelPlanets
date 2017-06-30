@@ -179,7 +179,7 @@ public class PG_Character : MonoBehaviour
 				GameObject vNewProj = Instantiate (WeaponList[CurrentWeaponIndex].vProjectile);
 				PG_Projectile vProj = vNewProj.GetComponent<PG_Projectile> ();
 				vProj.vProjectileDmg = WeaponList [CurrentWeaponIndex].vDmgValue;
-				vProj.vDirection = WalkingDirection;				
+				//vProj.vDirection = WalkingDirection;				
 				vNewProj.transform.position = transform.position;
 
 				//send to the projectile if the weapon use the gravity
