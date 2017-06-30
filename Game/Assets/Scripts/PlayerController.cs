@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour {
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
     public List<Sprite> DieAnimationList;
+    public List<Sprite> DamageAnimationList;
     public List<Sprite> JumpAnimationList;
 
     public List<PG_Weapons> WeaponList;                         //we handle all the weapons that will be used for the character here
@@ -49,9 +50,9 @@ public class PlayerController : MonoBehaviour {
     public bool vCanUseWeapon = false;
 
     public bool isDead = false;
-
+    public bool isDamage = false;
     //sound effect variables
-	public AudioSource jumpSfx;
+    public AudioSource jumpSfx;
 	public AudioSource deathSfx;
 	public AudioSource hitSfx;
 	
@@ -165,6 +166,14 @@ public class PlayerController : MonoBehaviour {
       
             Die ();
 		}
+
+        if (isDamage)
+        {
+
+            UpdateCharacterAnimation();
+
+            isDamage = false;
+        }
 
 
         //check if this character can move freely or it's disabled
@@ -514,7 +523,12 @@ public class PlayerController : MonoBehaviour {
             vCurAnimList = DieAnimationList;
            
         }
-            
+        if (isDamage)
+        {
+            vCurAnimList = DamageAnimationList;
+
+        }
+
 
         if (vCurrentFrame + 1 >= vCurAnimList.Count)
             vCurrentFrame = 0;

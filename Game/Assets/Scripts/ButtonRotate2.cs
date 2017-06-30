@@ -2,22 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ButtonRotate : MonoBehaviour {
+public class ButtonRotate2 : MonoBehaviour {
 
 	public bool isOn = false;
 	public Planet planet;
 
+	public float delaytime = 2.0f;
+	public float rotateSpeed = 20f;
 	public GameObject vButtonObj; 
 	private Vector3 vOriginalPosition;
 	private Vector3 vTargetPosition;
-	private List<GameObject> vNearbyPlayer;
+	public SpriteRenderer vLightRenderer;
 	// Use this for initialization
 	void Start () {
-
-
 		planet.vRotate = false;
-
-		vNearbyPlayer = new List<GameObject> ();
+		planet.vRotateSpeed = rotateSpeed;
 		if (vButtonObj != null) {
 
 			//get the calculated position to move between both position for the button to make the nice move animation smoothly
@@ -30,35 +29,27 @@ public class ButtonRotate : MonoBehaviour {
 			else
 				vButtonObj.transform.localPosition = vOriginalPosition;
 		}
+		if (vLightRenderer != null)
+			vLightRenderer.enabled = true;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		if (isOn) {
-			planet.vRotate = true;
-			vButtonObj.transform.localPosition = vOriginalPosition + (Vector3.down * 0.1f);
-		} else {
-			planet.vRotate = false;
-			vButtonObj.transform.localPosition = vOriginalPosition;
-		}
+		
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
-	{
-//		
-		//CANNOT click AGAIN on the button until the player leave the button.
-		if (col.tag == "Player" && !vNearbyPlayer.Contains(col.gameObject)) {
-			//add the player
-			vNearbyPlayer.Add (col.gameObject);
-			isOn = !isOn;
+	{	
+		if (col.tag == "Player" && !isOn) {
+			planet.vRotate = true;
+			vLightRenderer.enabled = false;
+			isOn = true;
+			vButtonObj.transform.localPosition = vOriginalPosition + (Vector3.down*0.1f);
+			StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
+				{
+					planet.vRotate = false;
+				}, delaytime));
 		}
-	}
 
-	void OnTriggerExit2D(Collider2D col)
-	{
-		//remove the gameobject
-		if (vNearbyPlayer.Contains(col.gameObject))
-			vNearbyPlayer.Remove (col.gameObject);
 	}
-
 }
