@@ -15,8 +15,9 @@ public class PlayerController : MonoBehaviour {
 	public float jumpForce = 50f;
 
 	//in game variables
-	public enum Walk_Direction {Right, Left};   //directions the player can walk
-    public Walk_Direction WalkingDirection = Walk_Direction.Right;  //set initial walking direction to right
+	public enum PG_Direction {Right, Left};   //directions the player can walk
+    public PG_Direction WalkingDirection = PG_Direction.Right;  //set initial walking direction to right
+	public PG_Direction LastDirection = PG_Direction.Right;		//direction it will walk automatically
     public List<GameObject> vPlanetList;        //a list of planet
     public GameObject vCurPlanet;               //gameobject to store the palyer's current planet
     public GameObject vCurField;                //gameobject to store the player's current gravity field
@@ -181,15 +182,57 @@ public class PlayerController : MonoBehaviour {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
-			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
 				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
-				WalkingDirection = Walk_Direction.Right;
+				WalkingDirection = PG_Direction.Right;
 			}
 
 			//check if going LEFT
-			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
 				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
-				WalkingDirection = Walk_Direction.Left;
+				WalkingDirection = PG_Direction.Left;
+			}
+
+			//make sure were using the weapon list
+			if (LastDirection != WalkingDirection && WeaponList.Count > 0) {
+
+				//update last direction for the current new direction
+				LastDirection = WalkingDirection;
+
+				//change rotation of the weapon
+				if (vWeaponObj != null) {
+					Quaternion vNewRotation = vWeaponObj.transform.localRotation;
+					if (WalkingDirection == PG_Direction.Left)
+						vWeaponRenderer.flipX = true;
+					else
+						vWeaponRenderer.flipX = false;
+
+					//change its rotation
+					vWeaponObj.transform.localRotation = vNewRotation;
+				}
+			}
+
+			//if spacebar, create a projectile going on players
+			if (Input.GetMouseButtonDown (0) && vCanUseWeapon) 
+			if (WeaponList.Count-1 >= CurrentWeaponIndex)
+			if (WeaponList[CurrentWeaponIndex].vProjectile != null){
+				//create the projectile which will move in the same direction as this character and hit other characters
+				GameObject vNewProj = Instantiate (WeaponList[CurrentWeaponIndex].vProjectile);
+				PG_Projectile vProj = vNewProj.GetComponent<PG_Projectile> ();
+				vProj.vProjectileDmg = WeaponList [CurrentWeaponIndex].vDmgValue;
+				vProj.vDirection = WalkingDirection;				
+				vNewProj.transform.position = transform.position;
+
+				//send to the projectile if the weapon use the gravity
+				vProj.vUseGravity = WeaponList [CurrentWeaponIndex].UseGravity;
+
+				//make him a child ONLY if we use the gravity
+				if (vProj.vUseGravity)
+					vNewProj.transform.parent = transform.parent.transform;	
+
+				vNewProj.transform.rotation = vWeaponObj.transform.rotation;
+				vNewProj.transform.localScale = transform.localScale;
+				vProj.ProjectileIsReady ();
 			}
 
 			//check if JUMP
@@ -238,6 +281,35 @@ public class PlayerController : MonoBehaviour {
         {
             AddGravity(vCurPlanet);
         }
+
+		//rotate weapon if have one
+		Vector3 vMousePosition = Input.mousePosition;
+		if (vWeaponObj != null) {
+			Vector3 vWeaponPosition = vWeaponObj.transform.position;
+
+			//calcualte the angle
+			Vector3 pos = Camera.main.WorldToScreenPoint (vWeaponPosition);
+			Vector3 dir = vMousePosition - pos;
+
+			Quaternion newRotation = Quaternion.LookRotation (dir, Vector3.forward);
+			newRotation.x = 0f;
+			newRotation.y = 0f;
+
+			float vNewAngle = 0f;
+
+			//rotate a little bit more left & right walk movement
+			if (WalkingDirection == PG_Direction.Right)
+				vNewAngle = newRotation.eulerAngles.z - 90f;
+			else
+				vNewAngle = newRotation.eulerAngles.z - 270f;
+
+			newRotation = Quaternion.Euler (0f, 0f, vNewAngle);
+
+			//check if we can rotate there
+			if (CanRotate (vNewAngle))
+				vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
+		}
+
     }
 
     //TODO: need to fix the variables
@@ -510,7 +582,7 @@ public class PlayerController : MonoBehaviour {
     {
         //get the right list ot use
         List<Sprite> vCurAnimList;
-        if (WalkingDirection == Walk_Direction.Right)
+        if (WalkingDirection == PG_Direction.Right)
             vCurAnimList = RightWalkAnimationList;
         else
             vCurAnimList = LeftWalkAnimationList;
