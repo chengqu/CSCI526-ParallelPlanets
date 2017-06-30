@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour {
 	// jetcraft variable
 	private bool JetCraft = false;
 	private float currentAmount = 0;
-	private float speed = 5;
+	private float speed = 20;
 	private float MovementSpeed = 1f;
 	public Vector3 testV3;
 
@@ -192,6 +192,7 @@ public class PlayerController : MonoBehaviour {
 			} else {
 				JetCraft = false;
 				vJumpHeight = 1f;
+				CheckIfNearbyPlanet ();
 			}
 
         if (isDamage)
@@ -576,6 +577,8 @@ public class PlayerController : MonoBehaviour {
 			Destroy (col.gameObject);
 			JetCraft = true;
 			transform.parent = null;
+			vCurPlanet = null;
+			vCurField = null;
 		}
 
         //triggers when colide with a gameobject
