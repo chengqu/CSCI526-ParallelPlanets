@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class RPB : MonoBehaviour {
 
+	public Transform Planet_gravityfield_big;
 	public Transform LoadingBar;
 	public Transform TextIndicator;
 	public float currentAmount;
 	public float speed;
 	public bool startTimeOut = false;
+
 	// Update is called once per frame
 	void Update () {
 		if (startTimeOut) {
@@ -20,7 +22,6 @@ public class RPB : MonoBehaviour {
 				TextIndicator.GetComponent<Text> ().text = "DONE!";
 			}
 			LoadingBar.GetComponent<Image> ().fillAmount = currentAmount / 100;
-
 		}
 	}
 }
