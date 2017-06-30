@@ -38,6 +38,15 @@ public class PG_TeleportField : MonoBehaviour {
 		}
 	}
 
+	void OnParticleCollision(GameObject other)
+	{
+		//check if it's the other faction
+		if (other.tag == "fire" && vLinkedObj != null) {
+
+			StartCoroutine (TeleportPlayerEffect (other));
+		}
+	}
+
 	void ToggleComponentsObj(GameObject vObj, bool vChoice, GameObject vNewPlanet = null)
 	{
 		//character
@@ -142,7 +151,7 @@ public class PG_TeleportField : MonoBehaviour {
 			}
 
 			//go back to it's original 
-			vObj.transform.localScale = new Vector3 (1f, 1f, 1f);
+			vObj.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 		}
 	}
 

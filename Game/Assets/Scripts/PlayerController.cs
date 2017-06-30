@@ -1,11 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CnControls;
+using UnityEngine.UI;
+using AssemblyCSharp;
 
 public class PlayerController : MonoBehaviour {
 
+	public bool findTarget = false;
 
     //public variables
+
+	public float moveSpeed = 5f;
+	public float jumpForce = 50f;
+
+	//in game variables
 	public enum Walk_Direction {Right, Left};   //directions the player can walk
     public Walk_Direction WalkingDirection = Walk_Direction.Right;  //set initial walking direction to right
     public List<GameObject> vPlanetList;        //a list of planet
@@ -26,12 +35,38 @@ public class PlayerController : MonoBehaviour {
     public bool CanWalkOnPlateform = false;     //check if it can jump on plateform. Prevent Clouds from getting higher when passing above the plateform
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
+
+
+    public List<Sprite> LeftWalkAnimationList;
+    public List<Sprite> RightWalkAnimationList;
+    public List<Sprite> DieAnimationList;
+    public List<Sprite> JumpAnimationList;
+
+    public List<PG_Weapons> WeaponList;                         //we handle all the weapons that will be used for the character here
+    public int CurrentWeaponIndex = 0;
+    public GameObject vProjectile;								//hold a projectile to shoot
+    public GameObject vWeaponObj;
+    public bool vCanUseWeapon = false;
+
+    public bool isDead = false;
+
+    //sound effect variables
+	public AudioSource jumpSfx;
+	public AudioSource deathSfx;
+	public AudioSource hitSfx;
 	
 
     //private variables
+    private bool deathFlag = true;
+	private bool jumpFlag = false;
+    private bool moveLeft, moveRight, doJump = false;
+    private SpriteRenderer vWeaponRenderer;
+
     private float elapseanimation = 0f;         //elapsed walking animation
 	private float animationSpeed = 0.1f;        //walk animation speed
-	private Vector3 pos;                        //init the position as a 3d vector
+    private int vCurrentFrame = 0;
+    
+    private Vector3 pos;                        //init the position as a 3d vector
 	private Quaternion rotation;                //init the rotation of player
 
 	private float vCenterDist;                  //the dist between player center to the ground
@@ -46,11 +81,42 @@ public class PlayerController : MonoBehaviour {
 	private GameObject vCircleCollider;         //player's circle collider
 	private Rigidbody2D myRigidBody;            //player's rigid body
 	private SpriteRenderer myRenderer;          //player's sprite renderer
+    private Quaternion vStartingRotation;
+
+    //healthbar
+    public Slider healthBar;
+	public float curHealth = 100;
+	private float maxHealth = 100;
 
 
+	public void Damage(float damage) {
+		hitSfx.Play ();
+		curHealth -= damage;
+		healthBar.value = curHealth/maxHealth;
+		if (curHealth <= 0) {
+			isDead = true;
+		}
+	}
 	// Use this for initialization
 	void Start () {
 
+        CurrentWeaponIndex = 0;
+
+        //check if we use the weapon list
+        if (WeaponList.Count > 0)
+        {
+
+            //get the renderer
+            vWeaponRenderer = vWeaponObj.GetComponent<SpriteRenderer>();
+
+            //keep in memory the local rotation
+            vStartingRotation = vWeaponObj.transform.localRotation;
+
+            //change its weapon
+            ChangeWeapon(CurrentWeaponIndex);
+        }
+
+        findTarget = false;
 		myRigidBody = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		vCurPlanet = null;
@@ -75,6 +141,9 @@ public class PlayerController : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(vOriginalRotation);
 
 		IsReadyToChange = false;
+        UpdateCharacterAnimation();
+
+		healthBar.value = curHealth/maxHealth;
     }
 
 	//change current planet
@@ -84,36 +153,49 @@ public class PlayerController : MonoBehaviour {
 		vCurPlanet = vNewPlanet;
         vCurField = vNewPlanet.transform.parent.gameObject;
         //set the parent of the player the planet he's currently on
-		//transform.parent = vCurPlanet.transform;
+		transform.parent = vCurPlanet.transform;
 	}
-
+		
 	// Update is called once per frame
 	void Update () {
 
-		//check if this character can move freely or it's disabled
-		if (vCanMove) {
+		if (isDead) {
+
+            UpdateCharacterAnimation();
+      
+            Die ();
+		}
+
+
+        //check if this character can move freely or it's disabled
+        if (vCanMove) {
 			pos = Vector3.zero;
 
 			//check if going RIGHT
-			if ((IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
+			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Right)) {
 				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Right;
 			}
 
 			//check if going LEFT
-			if ((IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
+			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == Walk_Direction.Left)) {
 				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 				WalkingDirection = Walk_Direction.Left;
 			}
 
 			//check if JUMP
-			if (IsPlayer && Input.GetAxis ("Vertical") > 0 && !IsJumping && CanJump) {
+			if ( (IsPlayer && (CnInputManager.GetButtonDown("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
 				IsJumping = true;
 				CanJump = false;
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
+                UpdateCharacterAnimation();
 
-			}
+				if (jumpFlag) {
+					jumpSfx.Play ();
+				}
+				jumpFlag = true;
+            }
 
 			//check if the character is walking
 			if (pos != Vector3.zero)
@@ -129,14 +211,15 @@ public class PlayerController : MonoBehaviour {
 								//increase time
 								elapseanimation += Time.deltaTime;
 								if (elapseanimation >= animationSpeed) {
-									//UpdateCharacterAnimation ();
+									UpdateCharacterAnimation ();
 									elapseanimation = 0f;
 								}
 			}
 
 
 		}
-	}
+       
+    }
 
 
 	void FixedUpdate () {
@@ -185,8 +268,10 @@ public class PlayerController : MonoBehaviour {
 	
 			if (vCurPlanet == null) {
 				foreach (RaycastHit2D hit in hitAlll) {
-					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject)
+					if (hit.transform.tag == "Planet" && vCurPlanet == null && hit.transform.gameObject != transform.gameObject) {
 						vCurPlanet = hit.transform.gameObject;
+						transform.parent = vCurPlanet.transform;
+					}
                         if(hit.transform.parent != null)
                           vCurField = hit.transform.parent.gameObject;
 				}
@@ -246,10 +331,10 @@ public class PlayerController : MonoBehaviour {
 					vDiff *= -1;
 
 				//here we calculate how fast we must rotate the character
-			if (vDiff < 0.001)
+			if (vDiff < 0.01)
 				vRotateSpeed = 1f;
 			else if (vDiff < 0.2f)
-					vRotateSpeed = 30f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
+					vRotateSpeed = 10f;				//small rotation to be smooth and be able to have the same exact position between Left and Right
 			else if (vDiff >= 0.2f && vDiff < 0.4f)
 					vRotateSpeed = 80f;				//need to turn a little bit faster
 			else
@@ -305,11 +390,50 @@ public class PlayerController : MonoBehaviour {
                 //change the planet
 				vCurPlanet = vPlanet;
 				//make sure the character scale isn't changed between planets
-				//transform.parent = vCurPlanet.transform;
+				transform.parent = vCurPlanet.transform;
+				vCurField = vCurPlanet.transform.parent.gameObject;
 			}
 	}
 
-	void RotateObj(string vDirection)
+    public void ChangeWeapon(int vNewWeaponIndex)
+    {
+        //change its weapon index then changing the weapon
+        CurrentWeaponIndex = vNewWeaponIndex;
+
+        //change the weapon for this one
+        vWeaponRenderer.sprite = WeaponList[CurrentWeaponIndex].vSprite;
+
+        //change its rotation by default to look forward.
+        vWeaponObj.transform.localRotation = vStartingRotation;
+    }
+
+    //check if we rotate or not
+    bool CanRotate(float angle)
+    {
+        bool vCanRotate = false;
+
+        if (!WeaponList[CurrentWeaponIndex].UseGravity)
+        {
+
+            //get the player rotation
+            angle = angle - transform.rotation.eulerAngles.z;
+
+            //make sure the calculated angle is in the 180f/-180f range.
+            if (angle < -180f)
+                angle += 360f;
+            if (angle > 180f)
+                angle -= 360f;
+
+            //cannot rotate gun behind character.
+            if (angle <= 85f && angle >= -85f)
+                vCanRotate = true;
+        }
+
+        return vCanRotate;
+    }
+
+
+    void RotateObj(string vDirection)
 	{
 		//initialise variable
 		float RotateByAngle = 0f;
@@ -327,35 +451,20 @@ public class PlayerController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
-//
-//	void UpdateCharacterAnimation()
-//	{
-//		//get the right list ot use
-//		List<Sprite> vCurAnimList; 
-//		if (WalkingDirection == PG_Direction.Right)
-//			vCurAnimList = RightWalkAnimationList;
-//		else
-//			vCurAnimList = LeftWalkAnimationList;
-//
-//		if (vCurrentFrame + 1 >= vCurAnimList.Count)
-//			vCurrentFrame = 0;
-//		else
-//			vCurrentFrame++;
-//
-//		//then change the sprite correctly
-//		if (vCurAnimList.Count > 0)
-//			vRenderer.sprite = vCurAnimList[vCurrentFrame];
-//	}
+
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		if (col.CompareTag ("TargetItem")) {
+			Destroy (col.gameObject);
+			findTarget = true;
+		}
         //triggers when colide with a gameobject
         if (col.tag == "GravityField")
         {
             //if the colider is GravityField
             //add this planet
             if (col.gameObject != vCurField){
-                vCurField = col.gameObject;
                 foreach (Transform child in col.gameObject.transform) {
                     if (child.gameObject.tag == "Planet" && !vPlanetList.Contains(child.gameObject)) {
                         vPlanetList.Add(child.gameObject);
@@ -368,7 +477,7 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerExit2D(Collider2D col)
 	{
-		//make sure it's the player
+		//triggers when exit a collision
 		if (col.tag == "GravityField")
 		{
 			//remove this planet
@@ -379,8 +488,60 @@ public class PlayerController : MonoBehaviour {
 			}	
 		}
 	}
-}
 
+	void OnCollisionEnter2D(Collision2D collision) {
+		//triggers when two rigidbody object collide
+		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
+			isDead = true;
+		}
+	}
+
+
+    void UpdateCharacterAnimation()
+    {
+        //get the right list ot use
+        List<Sprite> vCurAnimList;
+        if (WalkingDirection == Walk_Direction.Right)
+            vCurAnimList = RightWalkAnimationList;
+        else
+            vCurAnimList = LeftWalkAnimationList;
+
+        if (IsJumping )
+            vCurAnimList = JumpAnimationList;
+
+        if (isDead)
+        {
+            vCurAnimList = DieAnimationList;
+           
+        }
+            
+
+        if (vCurrentFrame + 1 >= vCurAnimList.Count)
+            vCurrentFrame = 0;
+        else
+            vCurrentFrame++;
+
+        //then change the sprite correctly
+        if (vCurAnimList.Count > 0)
+            myRenderer.sprite = vCurAnimList[vCurrentFrame];
+    }
+
+
+	void Die() {
+
+		if (deathFlag) {
+			deathSfx.Play ();
+			deathFlag = false;
+		}
+
+            StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
+            {
+                Application.LoadLevel(Application.loadedLevel);
+            }, 2.0f));
+        
+	}
+
+}
 
 
 
