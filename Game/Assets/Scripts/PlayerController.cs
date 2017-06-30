@@ -204,7 +204,7 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			//if spacebar, create a projectile going on players
-			if (Input.GetMouseButtonDown (0) && vCanUseWeapon) 
+			if (CnInputManager.GetButtonDown("Fire1") && vCanUseWeapon) 
 			if (WeaponList.Count-1 >= CurrentWeaponIndex)
 			if (WeaponList[CurrentWeaponIndex].vProjectile != null){
 				//create the projectile which will move in the same direction as this character and hit other characters
