@@ -47,6 +47,9 @@ public class PlayerController : MonoBehaviour {
 
 	public AudioSource jumpSfx;
 	public AudioSource deathSfx;
+	public AudioSource hitSfx;
+	private bool deathFlag = true;
+	private bool jumpFlag = false;
 
     //private variables
 
@@ -75,6 +78,7 @@ public class PlayerController : MonoBehaviour {
 	public float curHealth = 100;
 	private float maxHealth = 100;
 	public void Damage(float damage) {
+		hitSfx.Play ();
 		curHealth -= damage;
 		healthBar.value = curHealth/maxHealth;
 		if (curHealth <= 0) {
@@ -158,7 +162,11 @@ public class PlayerController : MonoBehaviour {
 				vElapsedHeight = 0f;
 				IsReadyToChange = true;
                 UpdateCharacterAnimation();
-				jumpSfx.Play ();
+
+				if (jumpFlag) {
+					jumpSfx.Play ();
+				}
+				jumpFlag = true;
             }
 
 			//check if the character is walking
@@ -455,7 +463,11 @@ public class PlayerController : MonoBehaviour {
 
 	void Die() {
 
-		deathSfx.Play ();
+		if (deathFlag) {
+			deathSfx.Play ();
+			deathFlag = false;
+		}
+
             StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
             {
                 Application.LoadLevel(Application.loadedLevel);
