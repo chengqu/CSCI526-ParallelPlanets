@@ -5,6 +5,7 @@ using CnControls;
 using UnityEngine.UI;
 using AssemblyCSharp;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour {
 
 	public bool findTarget = false;
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour {
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
     public List<Sprite> DieAnimationList;
+    public List<Sprite> DamageAnimationList;
     public List<Sprite> JumpAnimationList;
 
     public List<PG_Weapons> WeaponList;                         //we handle all the weapons that will be used for the character here
@@ -50,9 +52,9 @@ public class PlayerController : MonoBehaviour {
     public bool vCanUseWeapon = false;
 
     public bool isDead = false;
-
+    public bool isDamage = false;
     //sound effect variables
-	public AudioSource jumpSfx;
+    public AudioSource jumpSfx;
 	public AudioSource deathSfx;
 	public AudioSource hitSfx;
 	
@@ -89,6 +91,12 @@ public class PlayerController : MonoBehaviour {
 	public float curHealth = 100;
 	private float maxHealth = 100;
 
+	// jetcraft variable
+	private bool JetCraft = false;
+	private float currentAmount = 0;
+	private float speed = 5;
+	private float MovementSpeed = 1f;
+	public Vector3 testV3;
 
 	public void Damage(float damage) {
 		hitSfx.Play ();
@@ -166,24 +174,52 @@ public class PlayerController : MonoBehaviour {
       
             Die ();
 		}
-
-
-        //check if this character can move freely or it's disabled
-        if (vCanMove) {
-			pos = Vector3.zero;
-
-			//check if going RIGHT
-			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
-				pos += Vector3.right * vWalkSpeed * Time.deltaTime;
-				WalkingDirection = PG_Direction.Right;
+			
+		if (JetCraft) {
+			if (currentAmount < 100) {
+				float vJetSpeed = 1f;
+				currentAmount += speed * Time.deltaTime;
+				//vJumpHeight = 3f;
+				CanJump = false;
+				// Just use CnInputManager. instead of Input. and you're good to go
+//				var inputVector = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+				Vector3 movementVector = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+				testV3 = movementVector;
+//				movementVector += Physics.gravity;
+//				_characterController.Move(movementVector * Time.deltaTime);
+				//pos += vJetSpeed * Time.deltaTime;
+				transform.Translate (movementVector * vJetSpeed * Time.deltaTime);
+			} else {
+				JetCraft = false;
+				vJumpHeight = 1f;
 			}
 
-			//check if going LEFT
-			if ((IsPlayer && CnInputManager.GetAxis("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
-				pos += Vector3.left * vWalkSpeed * Time.deltaTime;
-				WalkingDirection = PG_Direction.Left;
-			}
+        if (isDamage)
+        {
 
+            UpdateCharacterAnimation();
+
+            isDamage = false;
+        }
+				
+
+		} else {
+			//check if this character can move freely or it's disabled
+			if (vCanMove) {
+				pos = Vector3.zero;
+
+				//check if going RIGHT
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
+					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
+					WalkingDirection = PG_Direction.Right;
+				}
+
+				//check if going LEFT
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
+					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
+					WalkingDirection = PG_Direction.Left;
+				}
+					
 			//make sure were using the weapon list
 			if (LastDirection != WalkingDirection && WeaponList.Count > 0) {
 
@@ -226,52 +262,55 @@ public class PlayerController : MonoBehaviour {
 				vProj.ProjectileIsReady ();
 			}
 
-			//check if JUMP
-			if ( (IsPlayer && (CnInputManager.GetButtonDown("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
-				IsJumping = true;
-				CanJump = false;
-				vElapsedHeight = 0f;
-				IsReadyToChange = true;
-                UpdateCharacterAnimation();
+				//check if JUMP
+				if ((IsPlayer && (CnInputManager.GetButtonDown ("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
+					IsJumping = true;
+					CanJump = false;
+					vElapsedHeight = 0f;
+					IsReadyToChange = true;
+					UpdateCharacterAnimation ();
 
-				if (jumpFlag) {
-					jumpSfx.Play ();
+					if (jumpFlag) {
+						jumpSfx.Play ();
+					}
+					jumpFlag = true;
 				}
-				jumpFlag = true;
-            }
 
-			//check if the character is walking
-			if (pos != Vector3.zero)
-				IsWalking = true;
-			else
-				IsWalking = false;
+				//check if the character is walking
+				if (pos != Vector3.zero)
+					IsWalking = true;
+				else
+					IsWalking = false;
 
-			//ONLY show walking animation when moving!
-			if (IsWalking) {
-				//move
-				transform.Translate (pos);
+				//ONLY show walking animation when moving!
+				if (IsWalking) {
+					//move
+					transform.Translate (pos);
 				
-								//increase time
-								elapseanimation += Time.deltaTime;
-								if (elapseanimation >= animationSpeed) {
-									UpdateCharacterAnimation ();
-									elapseanimation = 0f;
-								}
+					//increase time
+					elapseanimation += Time.deltaTime;
+					if (elapseanimation >= animationSpeed) {
+						UpdateCharacterAnimation ();
+						elapseanimation = 0f;
+					}
+				}
+
+
 			}
 
-
 		}
-       
     }
 
 
 	void FixedUpdate () {
         //update per frame, always keep the player down to a ground
+		if (!JetCraft) {
 			keepItDownDirectionPointToPlanet ();
-        if (vCurPlanet != null)
-        {
-            AddGravity(vCurPlanet);
-        }
+
+			if (vCurPlanet != null) {
+				AddGravity (vCurPlanet);
+			}
+		}
 
 		//rotate weapon if have one
 		Vector3 vMousePosition = Input.mousePosition;
@@ -300,6 +339,7 @@ public class PlayerController : MonoBehaviour {
 			if (CanRotate (vNewAngle))
 				vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
 		}
+
 
     }
 
@@ -531,6 +571,13 @@ public class PlayerController : MonoBehaviour {
 			Destroy (col.gameObject);
 			findTarget = true;
 		}
+
+		if (col.CompareTag ("JetCraftItem")) {
+			Destroy (col.gameObject);
+			JetCraft = true;
+			transform.parent = null;
+		}
+
         //triggers when colide with a gameobject
         if (col.tag == "GravityField")
         {
@@ -586,7 +633,12 @@ public class PlayerController : MonoBehaviour {
             vCurAnimList = DieAnimationList;
            
         }
-            
+        if (isDamage)
+        {
+            vCurAnimList = DamageAnimationList;
+
+        }
+
 
         if (vCurrentFrame + 1 >= vCurAnimList.Count)
             vCurrentFrame = 0;
