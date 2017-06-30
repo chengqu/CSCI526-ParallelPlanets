@@ -15,7 +15,7 @@ public class ButtonRotate : MonoBehaviour {
 	void Start () {
 
 		//planet.vRotate = false;
->>>>>>> eca037170a05ce2fd44de1958161b1d6b97068b3
+//>>>>>>> eca037170a05ce2fd44de1958161b1d6b97068b3
 
 		vNearbyPlayer = new List<GameObject> ();
 		if (vButtonObj != null) {
