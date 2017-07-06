@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CloudDamage : MonoBehaviour {
-
+	public float damage = 1f;
 	// Use this for initialization
 	public PlayerController bunny;
 	void Start () {
@@ -18,7 +18,7 @@ public class CloudDamage : MonoBehaviour {
 	void OnParticleCollision (GameObject other) {
 		if (other.tag == "Player") {
 			bunny = other.GetComponent<PlayerController> ();
-			bunny.Damage (8);
+			bunny.Damage (damage);
 		}
 	}
 }

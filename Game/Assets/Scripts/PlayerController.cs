@@ -90,27 +90,40 @@ public class PlayerController : MonoBehaviour {
     public Slider healthBar;
 	public float curHealth = 100;
 	private float maxHealth = 100;
-
+	//shin
+	private SpriteRenderer vRenderer;
+	private Material vSpriteMat;
+	private Material vBlinkMat;
 	// jetcraft variable
+	public float jetPos = 1f;
 	private bool JetCraft = false;
 	private float currentAmount = 0;
 	private float speed = 20;
 	private float MovementSpeed = 1f;
 	public Vector3 testV3;
 	public GameObject jetpack;
+	private SpriteRenderer jetRenderer;
+	public GameObject explosion;
+
 	public void Damage(float damage) {
-		hitSfx.Play ();
+	//	hitSfx.Play ();
 		curHealth -= damage;
 		healthBar.value = curHealth/maxHealth;
 		if (curHealth <= 0) {
 			isDead = true;
 		}
+		StartCoroutine(BlinkEffect(vRenderer));
 	}
 	// Use this for initialization
 	void Start () {
 
         CurrentWeaponIndex = 0;
 		jetpack.SetActive (false);
+		explosion.SetActive (false);
+		vRenderer = GetComponent<SpriteRenderer> ();
+		jetRenderer = jetpack.GetComponent<SpriteRenderer> ();
+		vSpriteMat = vRenderer.material;														//get back the default material
+		vBlinkMat = (Material)Resources.Load("Components/DroidSansMono", typeof(Material));	
         //check if we use the weapon list
         if (WeaponList.Count > 0)
         {
@@ -155,6 +168,24 @@ public class PlayerController : MonoBehaviour {
 		healthBar.value = curHealth/maxHealth;
     }
 
+	IEnumerator BlinkEffect(SpriteRenderer vRenderer)
+	{
+		int cpt = 0;
+		int cptMax = 6;
+
+		while (cpt < cptMax) {
+			//white color
+			vRenderer.material = vBlinkMat;
+			yield return new WaitForSeconds (0.05f);
+
+			//normal color
+			vRenderer.material = vSpriteMat;
+			yield return new WaitForSeconds (0.05f);
+
+			cpt++;
+		}
+	}
+
 	//change current planet
 
 	public void ChangeCurPlanet(GameObject vNewPlanet)
@@ -186,11 +217,26 @@ public class PlayerController : MonoBehaviour {
 				Vector3 movementVector = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
 				testV3 = movementVector;
 				transform.Translate (movementVector * vJetSpeed * Time.deltaTime);
+				if (currentAmount > 80) {
+					StartCoroutine(BlinkEffect(jetRenderer));
+				}
+				if (CnInputManager.GetButtonDown ("Jump")) {
+					jetpack.SetActive (false);
+					JetCraft = false;
+					vJumpHeight = 1f;
+					CheckIfNearbyPlanet ();
+				}
 			} else {
 				jetpack.SetActive (false);
+				Damage (30);
+				explosion.SetActive (true);
 				JetCraft = false;
 				vJumpHeight = 1f;
 				CheckIfNearbyPlanet ();
+				StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
+					{
+						explosion.SetActive (false);
+					}, 2.0f));
 			}
 
         if (isDamage)
@@ -574,12 +620,23 @@ public class PlayerController : MonoBehaviour {
 			findTarget = true;
 		}
 
-		if (col.CompareTag ("JetCraftItem")) {
+		if (IsPlayer && col.CompareTag ("JetCraftItem")) {
+			transform.position += transform.up * jetPos;
+			currentAmount = 0;
 			Destroy (col.gameObject);
 			JetCraft = true;
 			transform.parent = null;
 			vCurPlanet = null;
 			vCurField = null;
+		}
+
+		if (col.tag == "Planet" && JetCraft) {
+			vPlanetList.Add(col.gameObject);
+			FoundNearbyPlanet = true;
+			jetpack.SetActive (false);
+			JetCraft = false;
+			vJumpHeight = 1f;
+			CheckIfNearbyPlanet ();
 		}
 
         //triggers when colide with a gameobject
