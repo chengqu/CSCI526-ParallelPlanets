@@ -241,9 +241,7 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			//if spacebar, create a projectile going on players
-			if (CnInputManager.GetButtonDown("Fire1") && vCanUseWeapon) 
-			if (WeaponList.Count-1 >= CurrentWeaponIndex)
-			if (WeaponList[CurrentWeaponIndex].vProjectile != null){
+			if ((CnInputManager.GetButtonDown("Fire1") && vCanUseWeapon) && (WeaponList.Count - 1 >= CurrentWeaponIndex) && (WeaponList[CurrentWeaponIndex].vProjectile != null)) {
 				//create the projectile which will move in the same direction as this character and hit other characters
 				GameObject vNewProj = Instantiate (WeaponList[CurrentWeaponIndex].vProjectile);
 				PG_Projectile vProj = vNewProj.GetComponent<PG_Projectile> ();
@@ -313,38 +311,39 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
+
+        //DONT USE IT FOR NOW, SEE IF WE NEED IT LATER
 		//rotate weapon if have one
-		Vector3 vMousePosition = Input.mousePosition;
-		if (vWeaponObj != null) {
-			Vector3 vWeaponPosition = vWeaponObj.transform.position;
+		//Vector3 vMousePosition = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+  //      if (vWeaponObj != null) {
+		//	Vector3 vWeaponPosition = vWeaponObj.transform.position;
 
-			//calcualte the angle
-			Vector3 pos = Camera.main.WorldToScreenPoint (vWeaponPosition);
-			Vector3 dir = vMousePosition - pos;
+		//	//calcualte the angle
+		//	Vector3 pos = Camera.main.WorldToScreenPoint (vWeaponPosition);
+		//	Vector3 dir = vMousePosition - pos;
 
-			Quaternion newRotation = Quaternion.LookRotation (dir, Vector3.forward);
-			newRotation.x = 0f;
-			newRotation.y = 0f;
+		//	Quaternion newRotation = Quaternion.LookRotation (dir, Vector3.forward);
+		//	newRotation.x = 0f;
+		//	newRotation.y = 0f;
 
-			float vNewAngle = 0f;
+		//	float vNewAngle = 0f;
 
-			//rotate a little bit more left & right walk movement
-			if (WalkingDirection == PG_Direction.Right)
-				vNewAngle = newRotation.eulerAngles.z - 90f;
-			else
-				vNewAngle = newRotation.eulerAngles.z - 270f;
+		//	//rotate a little bit more left & right walk movement
+		//	if (WalkingDirection == PG_Direction.Right)
+		//		vNewAngle = newRotation.eulerAngles.z - 90f;
+		//	else
+		//		vNewAngle = newRotation.eulerAngles.z - 270f;
 
-			newRotation = Quaternion.Euler (0f, 0f, vNewAngle);
+		//	newRotation = Quaternion.Euler (0f, 0f, vNewAngle);
 
-			//check if we can rotate there
-			if (CanRotate (vNewAngle))
-				vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
-		}
+		//	//check if we can rotate there
+		//	if (CanRotate (vNewAngle))
+		//		vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
+		//}
 
 
     }
 
-    //TODO: need to fix the variables
     void AddGravity(GameObject vCurPlanet)
     {
         Vector3 gravityDirection = (vCurPlanet.transform.position - transform.position).normalized;
@@ -568,6 +567,10 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+        if (col.CompareTag("Weapon")){
+            vCanUseWeapon = true;
+            vWeaponObj = col.gameObject;
+        }
 		if (col.CompareTag ("TargetItem")) {
 			Destroy (col.gameObject);
 			findTarget = true;
