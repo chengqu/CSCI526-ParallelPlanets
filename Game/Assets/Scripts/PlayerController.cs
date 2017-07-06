@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour {
 	private float speed = 20;
 	private float MovementSpeed = 1f;
 	public Vector3 testV3;
-	public GameObject jeckpack;
+	public GameObject jetpack;
 	public void Damage(float damage) {
 		hitSfx.Play ();
 		curHealth -= damage;
@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 
         CurrentWeaponIndex = 0;
-		jeckpack.SetActive (false);
+		jetpack.SetActive (false);
         //check if we use the weapon list
         if (WeaponList.Count > 0)
         {
@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour {
 			
 		if (JetCraft) {
 			if (currentAmount < 100) {
-				jeckpack.SetActive (true);
+				jetpack.SetActive (true);
 				transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 				float vJetSpeed = 1f;
 				currentAmount += speed * Time.deltaTime;
@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour {
 				testV3 = movementVector;
 				transform.Translate (movementVector * vJetSpeed * Time.deltaTime);
 			} else {
-				jeckpack.SetActive (false);
+				jetpack.SetActive (false);
 				JetCraft = false;
 				vJumpHeight = 1f;
 				CheckIfNearbyPlanet ();
