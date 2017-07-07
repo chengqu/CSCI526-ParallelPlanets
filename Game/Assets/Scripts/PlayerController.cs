@@ -38,6 +38,9 @@ public class PlayerController : MonoBehaviour {
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
 
+	//Controller
+	public GameObject direction4;
+	public GameObject direction2;
 
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
@@ -118,6 +121,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 
         CurrentWeaponIndex = 0;
+		direction4.SetActive (false);
 		jetpack.SetActive (false);
 		explosion.SetActive (false);
 		vRenderer = GetComponent<SpriteRenderer> ();
@@ -207,6 +211,8 @@ public class PlayerController : MonoBehaviour {
 		}
 			
 		if (JetCraft) {
+			direction4.SetActive (true);
+			direction2.SetActive (false);
 			if (currentAmount < 100) {
 				jetpack.SetActive (true);
 				transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
@@ -239,16 +245,18 @@ public class PlayerController : MonoBehaviour {
 					}, 2.0f));
 			}
 
-        if (isDamage)
-        {
+        	if (isDamage)
+        	{
 
-            UpdateCharacterAnimation();
+            	UpdateCharacterAnimation();
 
-            isDamage = false;
-        }
+            	isDamage = false;
+        	}
 				
 
 		} else {
+			direction4.SetActive (false);
+			direction2.SetActive (true);
 			//check if this character can move freely or it's disabled
 			if (vCanMove) {
 				pos = Vector3.zero;
