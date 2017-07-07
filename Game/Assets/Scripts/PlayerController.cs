@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviour {
 	//Controller
 	public GameObject direction4;
 	public GameObject direction2;
+	public GameObject fireButton;
+	public GameObject jumpButton;
 
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
@@ -123,6 +125,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 
         CurrentWeaponIndex = 0;
+		fireButton.SetActive (false);
 		direction4.SetActive (false);
 		jetpack.SetActive (false);
 		explosion.SetActive (false);
@@ -596,6 +599,7 @@ public class PlayerController : MonoBehaviour {
             vCanUseWeapon = true;
             Destroy(col.gameObject);
             ChangeWeapon(1); //change the weapon from none to bazooka 
+			fireButton.SetActive(true);
         }
 		if (col.CompareTag ("TargetItem")) {
 			Destroy (col.gameObject);
