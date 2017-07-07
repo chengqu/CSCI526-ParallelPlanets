@@ -16,9 +16,20 @@ public class HitToDie : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D col) {
-		if (col.transform.tag == "Player") {
-			bunny.Damage (damage);
-            bunny.isDamage = true;
+		if (col.tag == "Player") {
+			PlayerController bunny;
+			bunny = col.GetComponent<PlayerController> ();
+			bunny.Damage (20);
+		}
+		if (col.tag == "Cloud") {
+			Cloud cloud;
+			cloud = col.GetComponent<Cloud> ();
+			cloud.Damage (2);
+		}
+		if (col.tag == "Spikeman") {
+			CharacterController Spikeman;
+			Spikeman = col.GetComponent<CharacterController> ();
+			Spikeman.Damage (5);
 		}
 	}
 

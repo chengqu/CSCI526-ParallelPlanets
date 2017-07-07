@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using CnControls;
 public class dialogueHolder : MonoBehaviour {
 
 	public string dialogue = "Hi,Bunny...I need Cherry";
@@ -20,7 +20,7 @@ public class dialogueHolder : MonoBehaviour {
 
 	void OnTriggerStay2D(Collider2D col) {
 		if (col.transform.tag == "Player") {
-
+			bunny = col.GetComponent<PlayerController> ();
 			if (bunny.findTarget) {
 				dMAn.ShowBox ("Thank you, bunny! YOU WIN");
 				Invoke("win", 2);
