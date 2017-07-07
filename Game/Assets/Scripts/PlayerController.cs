@@ -104,6 +104,8 @@ public class PlayerController : MonoBehaviour {
 	public GameObject jetpack;
 	private SpriteRenderer jetRenderer;
 	public GameObject explosion;
+    public GameObject panel;
+   
 
 	public void Damage(float damage) {
 	//	hitSfx.Play ();
@@ -719,10 +721,8 @@ public class PlayerController : MonoBehaviour {
 			deathFlag = false;
 		}
 
-            StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
-            {
-                Application.LoadLevel(Application.loadedLevel);
-            }, 2.0f));
+        panel.SetActive(true);
+       
         
 	}
 
