@@ -38,6 +38,11 @@ public class PlayerController : MonoBehaviour {
     public bool IsAutoWalking = false;          //check if the player can manipulate it or is walking automatically
     public bool IsPlayer = true;                //check if its the player
 
+	//Controller
+	public GameObject direction4;
+	public GameObject direction2;
+	public GameObject fireButton;
+	public GameObject jumpButton;
 
     public List<Sprite> LeftWalkAnimationList;
     public List<Sprite> RightWalkAnimationList;
@@ -57,9 +62,11 @@ public class PlayerController : MonoBehaviour {
     public AudioSource jumpSfx;
 	public AudioSource deathSfx;
 	public AudioSource hitSfx;
-	
+
 
     //private variables
+    private Vector3 vGravityDirection;
+    private Vector3 vFacingDirection;
     private bool deathFlag = true;
 	private bool jumpFlag = false;
     private bool moveLeft, moveRight, doJump = false;
@@ -120,6 +127,8 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 
         CurrentWeaponIndex = 0;
+		fireButton.SetActive (false);
+		direction4.SetActive (false);
 		jetpack.SetActive (false);
 		explosion.SetActive (false);
 		vRenderer = GetComponent<SpriteRenderer> ();
@@ -209,6 +218,8 @@ public class PlayerController : MonoBehaviour {
 		}
 			
 		if (JetCraft) {
+			direction4.SetActive (true);
+			direction2.SetActive (false);
 			if (currentAmount < 100) {
 				jetpack.SetActive (true);
 				transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
@@ -241,16 +252,18 @@ public class PlayerController : MonoBehaviour {
 					}, 2.0f));
 			}
 
-        if (isDamage)
-        {
+        	if (isDamage)
+        	{
 
-            UpdateCharacterAnimation();
+            	UpdateCharacterAnimation();
 
-            isDamage = false;
-        }
+            	isDamage = false;
+        	}
 				
 
 		} else {
+			direction4.SetActive (false);
+			direction2.SetActive (true);
 			//check if this character can move freely or it's disabled
 			if (vCanMove) {
 				pos = Vector3.zero;
@@ -259,13 +272,13 @@ public class PlayerController : MonoBehaviour {
 				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
 					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 					WalkingDirection = PG_Direction.Right;
-				}
+                }
 
 				//check if going LEFT
 				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
 					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 					WalkingDirection = PG_Direction.Left;
-				}
+                }
 					
 			//make sure were using the weapon list
 			if (LastDirection != WalkingDirection && WeaponList.Count > 0) {
@@ -302,9 +315,10 @@ public class PlayerController : MonoBehaviour {
 				if (vProj.vUseGravity)
 					vNewProj.transform.parent = transform.parent.transform;	
 
-				vNewProj.transform.rotation = vWeaponObj.transform.rotation;
+				vNewProj.transform.rotation = transform.rotation;
 				vNewProj.transform.localScale = transform.localScale;
 				vProj.ProjectileIsReady ();
+                //vCanUseWeapon = false;
 			}
 
 				//check if JUMP
@@ -358,41 +372,11 @@ public class PlayerController : MonoBehaviour {
 		}
 
 
-        //DONT USE IT FOR NOW, SEE IF WE NEED IT LATER
-		//rotate weapon if have one
-		//Vector3 vMousePosition = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
-  //      if (vWeaponObj != null) {
-		//	Vector3 vWeaponPosition = vWeaponObj.transform.position;
-
-		//	//calcualte the angle
-		//	Vector3 pos = Camera.main.WorldToScreenPoint (vWeaponPosition);
-		//	Vector3 dir = vMousePosition - pos;
-
-		//	Quaternion newRotation = Quaternion.LookRotation (dir, Vector3.forward);
-		//	newRotation.x = 0f;
-		//	newRotation.y = 0f;
-
-		//	float vNewAngle = 0f;
-
-		//	//rotate a little bit more left & right walk movement
-		//	if (WalkingDirection == PG_Direction.Right)
-		//		vNewAngle = newRotation.eulerAngles.z - 90f;
-		//	else
-		//		vNewAngle = newRotation.eulerAngles.z - 270f;
-
-		//	newRotation = Quaternion.Euler (0f, 0f, vNewAngle);
-
-		//	//check if we can rotate there
-		//	if (CanRotate (vNewAngle))
-		//		vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
-		//}
-
-
     }
 
     void AddGravity(GameObject vCurPlanet)
     {
-        Vector3 gravityDirection = (vCurPlanet.transform.position - transform.position).normalized;
+        vGravityDirection = (vCurPlanet.transform.position - transform.position).normalized;
 
         //Add the gravity to the target object
         //myRigidBody.AddForce(gravity * gravityDirection);
@@ -613,9 +597,11 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-        if (col.CompareTag("Weapon")){
+        if (col.CompareTag("Bazooka")){
             vCanUseWeapon = true;
-            vWeaponObj = col.gameObject;
+            Destroy(col.gameObject);
+            ChangeWeapon(1); //change the weapon from none to bazooka 
+			fireButton.SetActive(true);
         }
 		if (col.CompareTag ("TargetItem")) {
 			Destroy (col.gameObject);

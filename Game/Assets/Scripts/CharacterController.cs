@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class CharacterController : MonoBehaviour {
 
 	public enum Walk_Direction {Right, Left};
@@ -40,6 +40,35 @@ public class CharacterController : MonoBehaviour {
 	private Rigidbody2D myRigidBody;
 	private SpriteRenderer myRenderer;
 	private PG_PlanetCollider vPlanetCollider;
+
+	//healthbar
+	public Slider healthBar;
+	public float curHealth = 100;
+	private float maxHealth = 100;
+
+	public void Damage(float damage) {
+		//	hitSfx.Play ();
+		curHealth -= damage;
+		healthBar.value = curHealth/maxHealth;
+		if (curHealth <= 0) {
+			Die ();
+		}
+//		StartCoroutine(BlinkEffect(vRenderer));
+	}
+
+	void Die() {
+//
+//		if (deathFlag) {
+//			deathSfx.Play ();
+//			deathFlag = false;
+//		}
+//
+//		StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
+//			{
+//				Application.LoadLevel(Application.loadedLevel);
+//			}, 2.0f));
+		Debug.Log("die");
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -135,16 +164,6 @@ public class CharacterController : MonoBehaviour {
 		keepItDownDirectionPointToPlanet ();
 
 	}
-
-//	private GameObject OwnPlanet;
-//	void FindOwnPlanet () {
-//		if (transform.tag == "PlanetScale") {
-//			foreach (Transform child in transform) {
-//				if (child.gameObject.tag == "Planet")
-//					OwnPlanet = child.gameObject;
-//			}
-//		}
-//	}
 
 	void keepItDownDirectionPointToPlanet() {
 		Vector3 fwd = (Vector2)vLeftObj.transform.TransformDirection(-Vector3.up);
@@ -311,27 +330,6 @@ public class CharacterController : MonoBehaviour {
 		temp.z += RotateByAngle;
 		transform.rotation = Quaternion.Euler(temp);
 	}
-
-	//	void MoveRight () {
-	//		Vector3 position = transform.position;
-	//		position += (vLeftObj.transform.position - myRenderer.bounds.center) * vWalkSpeed * Time.deltaTime;
-	//		transform.position = position;
-	//	}
-	//	void MoveLeft () {
-	//		Vector2 position = transform.position;
-	//		position.x -= speed;
-	//		transform.position = position;
-	//	}
-	//	void MoveUp () {
-	//		Vector2 position = transform.position;
-	//		position.y += speed;
-	//		transform.position = position;
-	//	}
-	//	void MoveDown () {
-	//		Vector2 position = transform.position;
-	//		position.y -= speed;
-	//		transform.position = position;
-	//	}
 
 	void OnCollisionEnter2D(Collision2D col) {
 

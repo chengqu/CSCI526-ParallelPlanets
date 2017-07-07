@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ParticleHIt : MonoBehaviour {
 
-	public PlayerController bunny;
-	public Cloud cloud;
 	// Use this for initialization
 	void Start () {
 		
@@ -18,12 +16,19 @@ public class ParticleHIt : MonoBehaviour {
 
 	void OnParticleCollision (GameObject other) {
 		if (other.tag == "Player") {
+			PlayerController bunny;
 			bunny = other.GetComponent<PlayerController> ();
 			bunny.Damage (20);
 		}
 		if (other.tag == "Cloud") {
+			Cloud cloud;
 			cloud = other.GetComponent<Cloud> ();
 			cloud.Damage (2);
+		}
+		if (other.tag == "Spikeman") {
+			CharacterController Spikeman;
+			Spikeman = other.GetComponent<CharacterController> ();
+			Spikeman.Damage (5);
 		}
 	}
 
