@@ -39,11 +39,13 @@ public class Spring : MonoBehaviour
         if (col.gameObject.GetComponent<PlayerController>())
         {
             GameObject vObj = col.gameObject;
-            PlayerController vChar = vObj.GetComponent<PlayerController>();
-			vChar.IsJumping = true;
-			vChar.CanJump = false;
-			vChar.vElapsedHeight = ElapsedHeight;
-			vChar.IsReadyToChange = true;
+			if (vObj.transform.parent == transform.parent) {
+				PlayerController vChar = vObj.GetComponent<PlayerController> ();
+				vChar.IsJumping = true;
+				vChar.CanJump = false;
+				vChar.vElapsedHeight = ElapsedHeight;
+				vChar.IsReadyToChange = true;
+			}
         }
     }
 
