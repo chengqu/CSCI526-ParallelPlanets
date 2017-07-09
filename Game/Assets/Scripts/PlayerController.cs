@@ -225,6 +225,11 @@ public class PlayerController : MonoBehaviour {
 				Debug.Log ("canfire");
 				vCanUseWeapon = false;
 				canfire = true;
+				if (WalkingDirection == PG_Direction.Right) {
+					Vector3 theScale = vWeaponObj.transform.localScale;
+					theScale.x *= -1;
+					vWeaponObj.transform.localScale = theScale;
+				}
 			}
 		}
 		if (JetCraft) {
@@ -280,6 +285,7 @@ public class PlayerController : MonoBehaviour {
 			Vector3 vMousePosition = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
 				//Debug.Log (vMousePosition);
 			if (vWeaponObj != null) {
+
 					Vector3 vWeaponPosition = vWeaponObj.transform.position;
 
 					//calcualte the angle
@@ -291,6 +297,7 @@ public class PlayerController : MonoBehaviour {
 					newRotation.y = 0f;
 					Debug.Log (newRotation);
 					vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
+					 
 					//if spacebar, create a projectile going on players
 				if ((CnInputManager.GetButtonDown("Jump") && canfire) && (WeaponList.Count - 1 >= CurrentWeaponIndex) && (WeaponList[CurrentWeaponIndex].vProjectile != null)) {
 						//create the projectile which will move in the same direction as this character and hit other characters
@@ -304,11 +311,17 @@ public class PlayerController : MonoBehaviour {
 						vProj.vUseGravity = WeaponList [CurrentWeaponIndex].UseGravity;
 
 						//make him a child ONLY if we use the gravity
-						if (vProj.vUseGravity)
+						if (vProj.vUseGravity) {
 							vNewProj.transform.parent = transform.parent.transform;	
+						}
 
 						vNewProj.transform.rotation = vWeaponObj.transform.rotation;
-						vNewProj.transform.localScale = transform.localScale;
+					    vNewProj.transform.localScale = vWeaponObj.transform.localScale;
+//						if (WalkingDirection == PG_Direction.Right) {
+//							vNewProj.transform.localRotation = Quaternion.localEuler(vNewProj.transform.rotation.x, 180, 0);
+//						} else {
+//							vNewProj.transform.localRotation = Quaternion.Euler(0, 0, 0);
+//						}
 						vProj.ProjectileIsReady ();
 						StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
 						canfire = false;

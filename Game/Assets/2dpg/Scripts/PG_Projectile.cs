@@ -285,12 +285,25 @@ public class PG_Projectile : MonoBehaviour
 	{
 		if (!Disabled) {
 			//check if it's the other faction
+			if (col.tag == "Cloud") {
+				Cloud cloud;
+				cloud = col.GetComponent<Cloud> ();
+				SpawnImpact ();
+				cloud.Damage (100);
+			}
+			if (col.tag == "Spikeman") {
+				CharacterController Spikeman;
+				Spikeman = col.GetComponent<CharacterController> ();
+				SpawnImpact ();
+				Spikeman.Damage (20);
+			}
 			if (col.tag == "Enemy") {
-				PlayerController vTargetChar = col.GetComponent<PlayerController> ();
-				vTargetChar.Damage (vProjectileDmg);
+				CharacterController enemy;
+				enemy = col.GetComponent<CharacterController> ();
+				enemy.Damage (100);
 				SpawnImpact ();
 			} else if (!col.gameObject.GetComponent<PG_TeleportField> ())
-			if (col.tag == "Planet" || col.tag == "Plateform") {
+				if (col.tag == "Planet" || col.tag == "Plateform") {
 				SpawnImpact ();
 			}
 		}
