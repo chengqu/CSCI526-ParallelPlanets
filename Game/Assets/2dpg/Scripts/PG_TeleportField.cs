@@ -41,7 +41,7 @@ public class PG_TeleportField : MonoBehaviour {
 	void OnParticleCollision(GameObject other)
 	{
 		//check if it's the other faction
-		if (other.tag == "fire" && vLinkedObj != null) {
+		if (CanBeTeleported (other.gameObject) && vLinkedObj != null) {
 
 			StartCoroutine (TeleportPlayerEffect (other));
 		}
@@ -71,6 +71,14 @@ public class PG_TeleportField : MonoBehaviour {
 
 			if (vNewPlanet != null)
 				vObj.GetComponent<PG_Object> ().ChangeCurPlanet (vNewPlanet);
+		}
+		//paricle
+		//object
+		if (vObj.GetComponent<ParticleObject> ()) {
+			vObj.GetComponent<ParticleObject> ().vCanMove = vChoice;
+
+			if (vNewPlanet != null)
+				vObj.GetComponent<ParticleObject> ().ChangeCurPlanet (vNewPlanet);
 		}
 	}
 
@@ -163,7 +171,8 @@ public class PG_TeleportField : MonoBehaviour {
 		//ONLY teleport these tags below
 		if (((vObj.tag == "Player" || vObj.tag == "Enemy") && vObj.GetComponent<PlayerController>().vCanMove) 
 			|| (vObj.tag == "Projectile" && vObj.GetComponent<PG_Projectile>().vCanMove)
-			|| (vObj.tag == "Object" && vObj.GetComponent<PG_Object>().vCanMove)) {
+			|| (vObj.tag == "Object" && vObj.GetComponent<PG_Object>().vCanMove) || 
+			(vObj.tag == "fire" && vObj.GetComponent<ParticleObject>().vCanMove)) {
 			vCanBeTeleported = true;
 		}
 

@@ -57,6 +57,9 @@ public class CharacterController : MonoBehaviour {
 	}
 
 	void Die() {
+		if (transform.tag == "Enemy") {
+			Destroy (gameObject);
+		}
 //
 //		if (deathFlag) {
 //			deathSfx.Play ();
