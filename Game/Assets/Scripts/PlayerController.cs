@@ -735,7 +735,7 @@ public class PlayerController : MonoBehaviour {
     }
 
 
-	void Die() {
+	public void Die() {
         panel.SetActive(true);
         if (deathFlag) {
 			deathSfx.Play ();

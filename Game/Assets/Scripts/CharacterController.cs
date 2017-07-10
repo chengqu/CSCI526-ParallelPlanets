@@ -10,7 +10,7 @@ public class CharacterController : MonoBehaviour {
 	public float vJumpSpeed = 3f;
 	public float vDistanceGround = 2f;
 	public float vWalkSpeed = 2f;
-	public float timeCount = 0.001f;
+	public float timeCount = 0.004f;
 	public bool vCanMove = true;
 	public bool CanWalkOnPlateform = false;		
 	public bool IsAutoWalking = false;
@@ -46,6 +46,7 @@ public class CharacterController : MonoBehaviour {
 	public float curHealth = 100;
 	private float maxHealth = 100;
 
+	public GameObject bunny;
 	public void Damage(float damage) {
 		//	hitSfx.Play ();
 		curHealth -= damage;
@@ -60,17 +61,8 @@ public class CharacterController : MonoBehaviour {
 		if (transform.tag == "Enemy") {
 			Destroy (gameObject);
 		}
-//
-//		if (deathFlag) {
-//			deathSfx.Play ();
-//			deathFlag = false;
-//		}
-//
-//		StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
-//			{
-//				Application.LoadLevel(Application.loadedLevel);
-//			}, 2.0f));
-		Debug.Log("die");
+		if (bunny != null)
+			bunny.GetComponent<PlayerController> ().Die ();
 	}
 
 	// Use this for initialization
