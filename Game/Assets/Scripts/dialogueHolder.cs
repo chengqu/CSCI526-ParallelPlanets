@@ -11,6 +11,10 @@ public class dialogueHolder : MonoBehaviour {
 	public PlayerController bunny;
 	bool showwin;
 	bool showmessage;
+    public GameObject Panel2;
+    public int scene;
+
+    
 	// Use this for initialization
 	void Start () {
 		showwin = false;
@@ -28,9 +32,9 @@ public class dialogueHolder : MonoBehaviour {
 		if (col.transform.tag == "Player") {
 			bunny = col.GetComponent<PlayerController> ();
 			if (bunny.findTarget && showwin == false) {
-				showwin = true;
-				dMAn.ShowBox ("Thank you, bunny! YOU WIN");
-				Invoke("win", 2);
+                PlayerPrefs.SetFloat(scene+"",PlayerController.curHealth);
+                showwin = true;
+                Panel2.SetActive(true);
 			}
 			else if (!bunny.findTarget && showmessage == false) {
 				showmessage = true;
@@ -39,7 +43,5 @@ public class dialogueHolder : MonoBehaviour {
 		}
 	}
 
-	void win() {
-		Application.LoadLevel ("StartScene");
-	}
+
 }

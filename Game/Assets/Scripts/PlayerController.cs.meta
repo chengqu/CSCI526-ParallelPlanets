@@ -1,12 +1,16 @@
 fileFormatVersion: 2
 guid: 214eb4a67284240c687b5c62ce1f7de6
-timeCreated: 1499396639
+timeCreated: 1499642356
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - vCurPlanet: {instanceID: 0}
   - vCurField: {instanceID: 0}
+  - direction4: {instanceID: 0}
+  - direction2: {instanceID: 0}
+  - fireButton: {instanceID: 0}
+  - jumpButton: {instanceID: 0}
   - vProjectile: {instanceID: 0}
   - vWeaponObj: {instanceID: 0}
   - jumpSfx: {instanceID: 0}
@@ -15,7 +19,7 @@ MonoImporter:
   - healthBar: {instanceID: 0}
   - jetpack: {instanceID: 0}
   - explosion: {instanceID: 0}
-  - panel: {fileID: 1446714955068924, guid: 35457f4cc7835d742a36b5ba201f487f, type: 2}
+  - panel: {fileID: 1933386286373538, guid: e0820be46de23ca43a57c8a358be4a7f, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
