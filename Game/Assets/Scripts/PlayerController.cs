@@ -238,7 +238,7 @@ public class PlayerController : MonoBehaviour {
 			if (currentAmount < 100) {
 				jetpack.SetActive (true);
 				transform.rotation = Quaternion.Euler (new Vector3 (0f, 0f, 0f));
-				float vJetSpeed = 1f;
+				float vJetSpeed = 2f;
 				currentAmount += speed * Time.deltaTime;
 				//vJumpHeight = 3f;
 				CanJump = false;
