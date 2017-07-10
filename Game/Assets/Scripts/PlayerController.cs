@@ -126,7 +126,8 @@ public class PlayerController : MonoBehaviour {
 	}
 	// Use this for initialization
 	void Start () {
-		canfire = false;
+        curHealth = 100;
+        canfire = false;
         CurrentWeaponIndex = 0;
 		fireButton.SetActive (false);
 		direction4.SetActive (false);
