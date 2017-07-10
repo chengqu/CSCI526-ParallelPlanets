@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using CnControls;
 
 public class DialogueManager : MonoBehaviour {
 
@@ -17,7 +17,7 @@ public class DialogueManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (dialogueAcctive && Input.GetKeyDown (KeyCode.Space)) {
+		if (dialogueAcctive && CnInputManager.GetButtonDown ("Cancel")) {
 			dBox.SetActive (false);
 			dialogueAcctive = false;
 		}
