@@ -7,7 +7,9 @@ public class LevelManagerUnlocked : MonoBehaviour {
 	public int Level;
 	public Image Image;
 	private string LevelString;
-
+    public GameObject star1;
+    public GameObject star2;
+    public GameObject star3;
 	void Start () {
 		if (ButtonSettings.releasedLevelStatic >= Level) {
 			Levelunlocked ();
@@ -32,7 +34,23 @@ public class LevelManagerUnlocked : MonoBehaviour {
 	}
 	void Levelunlocked ()
 	{
-		GetComponent<Button> ().interactable = true;
+        float health = PlayerPrefs.GetFloat(Level + "");
+        if (health > 0 && health < 30)
+        {
+            star1.SetActive(true);
+        }
+        else if (health >= 30 && health < 70)
+        {
+            star1.SetActive(true);
+            star2.SetActive(true);
+        }
+        else if(health >= 70 && health <= 100) {
+            star1.SetActive(true);
+            star2.SetActive(true);
+            star3.SetActive(true);
+        }
+
+         GetComponent<Button> ().interactable = true;
 		Image.enabled = false;
 	}
 

@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour {
 
     //healthbar
     public Slider healthBar;
-	public float curHealth = 100;
+	public static float curHealth = 100;
 	private float maxHealth = 100;
 	//shin
 	private SpriteRenderer vRenderer;
