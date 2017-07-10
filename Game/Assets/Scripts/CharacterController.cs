@@ -10,7 +10,7 @@ public class CharacterController : MonoBehaviour {
 	public float vJumpSpeed = 3f;
 	public float vDistanceGround = 2f;
 	public float vWalkSpeed = 2f;
-
+	public float timeCount = 0.001f;
 	public bool vCanMove = true;
 	public bool CanWalkOnPlateform = false;		
 	public bool IsAutoWalking = false;
@@ -113,6 +113,10 @@ public class CharacterController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+		if (transform.tag == "Spikeman") {
+			Damage (timeCount);
+		}
 
 		//check if this character can move freely or it's disabled
 		if (vCanMove) {
