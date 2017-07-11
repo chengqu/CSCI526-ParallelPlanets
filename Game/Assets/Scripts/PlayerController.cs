@@ -220,11 +220,9 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		if (vCanUseWeapon && !canfire && !JetCraft) {
-			Debug.Log ("vCanUseWeapon");
 			fireButton.SetActive (true);
 			vWeaponObj.SetActive (true);
 			if (CnInputManager.GetButtonDown ("Fire1")) {
-				Debug.Log ("canfire");
 				vCanUseWeapon = false;
 				canfire = true;
 				if (WalkingDirection == PG_Direction.Right) {
@@ -284,21 +282,11 @@ public class PlayerController : MonoBehaviour {
 
 				//rotate the weapon with direction4
 				//rotate weapon if have one
-			Vector3 vMousePosition = new Vector3(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
-				//Debug.Log (vMousePosition);
+
 			if (vWeaponObj != null) {
-
-					Vector3 vWeaponPosition = vWeaponObj.transform.position;
-
-					//calcualte the angle
-					Vector3 pos = Camera.main.WorldToScreenPoint (vWeaponPosition);
-					Vector3 dir = vMousePosition;
-
-					Quaternion newRotation = Quaternion.LookRotation (dir, Vector3.forward);
-					newRotation.x = 0f;
-					newRotation.y = 0f;
-					Debug.Log (newRotation);
-					vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, newRotation, 1f);
+				
+				float vNewAngle = Mathf.Atan2( CnInputManager.GetAxis("Vertical"), CnInputManager.GetAxis("Horizontal")) * Mathf.Rad2Deg;
+				vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, Quaternion.Euler (0f, 0f, vNewAngle), 1f);
 					 
 					//if spacebar, create a projectile going on players
 				if ((CnInputManager.GetButtonDown("Jump") && canfire) && (WeaponList.Count - 1 >= CurrentWeaponIndex) && (WeaponList[CurrentWeaponIndex].vProjectile != null)) {
@@ -313,23 +301,18 @@ public class PlayerController : MonoBehaviour {
 						vProj.vUseGravity = WeaponList [CurrentWeaponIndex].UseGravity;
 
 						//make him a child ONLY if we use the gravity
-						if (vProj.vUseGravity) {
+						if (vProj.vUseGravity)
 							vNewProj.transform.parent = transform.parent.transform;	
-						}
 
 						vNewProj.transform.rotation = vWeaponObj.transform.rotation;
-					    vNewProj.transform.localScale = vWeaponObj.transform.localScale;
-//						if (WalkingDirection == PG_Direction.Right) {
-//							vNewProj.transform.localRotation = Quaternion.localEuler(vNewProj.transform.rotation.x, 180, 0);
-//						} else {
-//							vNewProj.transform.localRotation = Quaternion.Euler(0, 0, 0);
-//						}
+						vNewProj.transform.localScale = transform.localScale;
 						vProj.ProjectileIsReady ();
 						StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
 						canfire = false;
 						vWeaponObj.SetActive (false);
 						}, 1.0f));
 					}
+
 				}
 		}
 		else {
@@ -351,7 +334,25 @@ public class PlayerController : MonoBehaviour {
 					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 					WalkingDirection = PG_Direction.Left;
                 }
-					
+
+				//make sure were using the weapon list
+				if (LastDirection != WalkingDirection && WeaponList.Count > 0) {
+
+					//update last direction for the current new direction
+					LastDirection = WalkingDirection;
+
+					//change rotation of the weapon
+					if (vWeaponObj != null) {
+						Quaternion vNewRotation = vWeaponObj.transform.localRotation;
+						if (WalkingDirection == PG_Direction.Right)
+							vWeaponRenderer.flipX = true;
+						else
+							vWeaponRenderer.flipX = false;
+
+						//change its rotation
+						vWeaponObj.transform.localRotation = vNewRotation;
+					}
+				}
 	
 
 				//check if JUMP
@@ -583,6 +584,7 @@ public class PlayerController : MonoBehaviour {
 
         //change its rotation by default to look forward.
         vWeaponObj.transform.localRotation = vStartingRotation;
+		vWeaponRenderer.flipX = true;
     }
 
     //check if we rotate or not
