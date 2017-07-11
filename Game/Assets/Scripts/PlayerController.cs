@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour {
     public GameObject vProjectile;								//hold a projectile to shoot
     public GameObject vWeaponObj;
     public bool vCanUseWeapon = false;
+	public bool vUnlimitedAmmo = false;
 
     public bool isDead = false;
     public bool isDamage = false;
@@ -129,8 +130,10 @@ public class PlayerController : MonoBehaviour {
         curHealth = 100;
         canfire = false;
         CurrentWeaponIndex = 0;
-		fireButton.SetActive (false);
-		direction4.SetActive (false);
+		if (!vUnlimitedAmmo) {
+			fireButton.SetActive (false);
+			direction4.SetActive (false);
+		}
 		jetpack.SetActive (false);
 		explosion.SetActive (false);
 		vRenderer = GetComponent<SpriteRenderer> ();
@@ -219,7 +222,7 @@ public class PlayerController : MonoBehaviour {
             Die ();
 		}
 
-		if (vCanUseWeapon && !canfire && !JetCraft) {
+		if (vCanUseWeapon && !canfire && !JetCraft && !vUnlimitedAmmo) {
 			fireButton.SetActive (true);
 			vWeaponObj.SetActive (true);
 			if (CnInputManager.GetButtonDown ("Fire1")) {
@@ -271,46 +274,158 @@ public class PlayerController : MonoBehaviour {
 
 		} else if (canfire) {
 			jetpack.SetActive (false);
-			fireButton.SetActive(false);
+			fireButton.SetActive (false);
 			direction4.SetActive (true);
 			direction2.SetActive (false);
 
-				//rotate the weapon with direction4
-				//rotate weapon if have one
+			//rotate the weapon with direction4
+			//rotate weapon if have one
 
 			if (vWeaponObj != null) {
 				
-				float vNewAngle = Mathf.Atan2( CnInputManager.GetAxis("Vertical"), CnInputManager.GetAxis("Horizontal")) * Mathf.Rad2Deg;
+				float vNewAngle = Mathf.Atan2 (CnInputManager.GetAxis ("Vertical"), CnInputManager.GetAxis ("Horizontal")) * Mathf.Rad2Deg;
 				vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, Quaternion.Euler (0f, 0f, vNewAngle), 1f);
 					 
-					//if spacebar, create a projectile going on players
-				if ((CnInputManager.GetButtonDown("Jump") && canfire) && (WeaponList.Count - 1 >= CurrentWeaponIndex) && (WeaponList[CurrentWeaponIndex].vProjectile != null)) {
-						//create the projectile which will move in the same direction as this character and hit other characters
-						GameObject vNewProj = Instantiate (WeaponList[CurrentWeaponIndex].vProjectile);
-						PG_Projectile vProj = vNewProj.GetComponent<PG_Projectile> ();
-						vProj.vProjectileDmg = WeaponList [CurrentWeaponIndex].vDmgValue;
-						vProj.vDirection = WalkingDirection;				
-						vNewProj.transform.position = transform.position;
+				//if spacebar, create a projectile going on players
+				if ((CnInputManager.GetButtonDown ("Jump") && canfire) && (WeaponList.Count - 1 >= CurrentWeaponIndex) && (WeaponList [CurrentWeaponIndex].vProjectile != null)) {
+					//create the projectile which will move in the same direction as this character and hit other characters
+					GameObject vNewProj = Instantiate (WeaponList [CurrentWeaponIndex].vProjectile);
+					PG_Projectile vProj = vNewProj.GetComponent<PG_Projectile> ();
+					vProj.vProjectileDmg = WeaponList [CurrentWeaponIndex].vDmgValue;
+					vProj.vDirection = WalkingDirection;				
+					vNewProj.transform.position = transform.position;
 
-						//send to the projectile if the weapon use the gravity
-						vProj.vUseGravity = WeaponList [CurrentWeaponIndex].UseGravity;
+					//send to the projectile if the weapon use the gravity
+					vProj.vUseGravity = WeaponList [CurrentWeaponIndex].UseGravity;
 
-						//make him a child ONLY if we use the gravity
-						if (vProj.vUseGravity)
-							vNewProj.transform.parent = transform.parent.transform;	
+					//make him a child ONLY if we use the gravity
+					if (vProj.vUseGravity)
+						vNewProj.transform.parent = transform.parent.transform;	
 
-						vNewProj.transform.rotation = vWeaponObj.transform.rotation;
-						vNewProj.transform.localScale = transform.localScale;
-						vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
-						vProj.ProjectileIsReady ();
-						canfire = false;
-						vWeaponObj.SetActive (false);
-						StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
-						Destroy(vProj);
-						}, 10.0f));
-					}
-
+					vNewProj.transform.rotation = vWeaponObj.transform.rotation;
+					vNewProj.transform.localScale = transform.localScale;
+					vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
+					vProj.ProjectileIsReady ();
+					canfire = false;
+					vWeaponObj.SetActive (false);
+					StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
+						Destroy (vProj);
+					}, 10.0f));
 				}
+
+			}
+		} else if (vUnlimitedAmmo) {
+			direction4.SetActive (true);
+			direction2.SetActive (false);
+
+			//check if this character can move freely or it's disabled
+			if (vCanMove) {
+				pos = Vector3.zero;
+
+				//check if going RIGHT
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
+					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
+					WalkingDirection = PG_Direction.Right;
+				}
+
+				//check if going LEFT
+				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
+					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
+					WalkingDirection = PG_Direction.Left;
+				}
+
+				//make sure were using the weapon list
+				if (LastDirection != WalkingDirection && WeaponList.Count > 0) {
+
+					//update last direction for the current new direction
+					LastDirection = WalkingDirection;
+
+					//change rotation of the weapon
+					if (vWeaponObj != null) {
+						Quaternion vNewRotation = vWeaponObj.transform.localRotation;
+						if (WalkingDirection == PG_Direction.Left)
+							vWeaponRenderer.flipX = true;
+						else
+							vWeaponRenderer.flipX = false;
+
+						//change its rotation
+						vWeaponObj.transform.localRotation = vNewRotation;
+					}
+				}
+
+
+				//check if JUMP
+				if ((IsPlayer && (CnInputManager.GetButtonDown ("Jump") || Input.GetAxis ("Vertical") > 0)) && !IsJumping && CanJump) {
+					IsJumping = true;
+					CanJump = false;
+					vElapsedHeight = 0f;
+					IsReadyToChange = true;
+					UpdateCharacterAnimation ();
+
+					if (jumpFlag) {
+						jumpSfx.Play ();
+					}
+					jumpFlag = true;
+				}
+
+				//check if the character is walking
+				if (pos != Vector3.zero)
+					IsWalking = true;
+				else
+					IsWalking = false;
+
+				//ONLY show walking animation when moving!
+				if (IsWalking) {
+					//move
+					transform.Translate (pos);
+
+					//increase time
+					elapseanimation += Time.deltaTime;
+					if (elapseanimation >= animationSpeed) {
+						UpdateCharacterAnimation ();
+						elapseanimation = 0f;
+					}
+				}
+
+
+			}
+
+			//rotate the weapon with direction4
+			//rotate weapon if have one
+
+			if (vWeaponObj != null) {
+
+				float vNewAngle = Mathf.Atan2 (CnInputManager.GetAxis ("Vertical"), CnInputManager.GetAxis ("Horizontal")) * Mathf.Rad2Deg;
+				vWeaponObj.transform.rotation = Quaternion.Slerp (vWeaponObj.transform.rotation, Quaternion.Euler (0f, 0f, vNewAngle), 1f);
+
+				//if spacebar, create a projectile going on players
+				if ((CnInputManager.GetButtonDown ("Fire1")) && (WeaponList.Count - 1 >= CurrentWeaponIndex) && (WeaponList [CurrentWeaponIndex].vProjectile != null)) {
+					//create the projectile which will move in the same direction as this character and hit other characters
+					GameObject vNewProj = Instantiate (WeaponList [CurrentWeaponIndex].vProjectile);
+					PG_Projectile vProj = vNewProj.GetComponent<PG_Projectile> ();
+					vProj.vProjectileDmg = WeaponList [CurrentWeaponIndex].vDmgValue;
+					vProj.vDirection = WalkingDirection;				
+					vNewProj.transform.position = transform.position;
+
+					//send to the projectile if the weapon use the gravity
+					vProj.vUseGravity = WeaponList [CurrentWeaponIndex].UseGravity;
+
+					//make him a child ONLY if we use the gravity
+					if (vProj.vUseGravity)
+						vNewProj.transform.parent = transform.parent.transform;	
+
+					vNewProj.transform.rotation = vWeaponObj.transform.rotation;
+					vNewProj.transform.localScale = transform.localScale;
+					vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
+					vProj.ProjectileIsReady ();
+					StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
+						Destroy (vProj);
+					}, 10.0f));
+				}
+
+			}
+
+
 		}
 		else {
 			jetpack.SetActive (false);
@@ -614,6 +729,16 @@ public class PlayerController : MonoBehaviour {
             Destroy(col.gameObject);
             ChangeWeapon(1); //change the weapon from none to bazooka 
         }
+
+		if (col.tag == "Weapon"){
+			canfire = false;
+			vUnlimitedAmmo = true;
+			vCanUseWeapon = true;
+			vWeaponObj.SetActive (true);
+			Destroy(col.gameObject);
+			ChangeWeapon(1); //change the weapon from none to bazooka 
+		}
+
 		if (col.CompareTag ("TargetItem")) {
 			Destroy (col.gameObject);
 			findTarget = true;
