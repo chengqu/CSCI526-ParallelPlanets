@@ -301,7 +301,7 @@ public class PlayerController : MonoBehaviour {
 
 						vNewProj.transform.rotation = vWeaponObj.transform.rotation;
 						vNewProj.transform.localScale = transform.localScale;
-					vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
+						vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
 						vProj.ProjectileIsReady ();
 						canfire = false;
 						vWeaponObj.SetActive (false);

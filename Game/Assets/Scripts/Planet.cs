@@ -67,6 +67,16 @@ public class Planet : MonoBehaviour
 		}
 	}
 
+	//increase the planets orbiting speed with a factor of 2
+	public void CallChangeOrbitingSpeed(){
+		if (transform.parent != null) {
+			transform.parent.gameObject.GetComponent<Planet> ().vRotateSpeed *= 2;
+		}
+	}
+
+	public void CallChangeRotateSpeed(){
+		vRotateSpeed *= 2;
+	}
 	//increase the planets with a factor 2x,3x,4x...
 	public void CallChangeScale()
 	{

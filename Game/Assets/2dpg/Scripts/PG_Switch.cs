@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PG_Switch : MonoBehaviour {
 
-	public enum LinkFunction {PlanetScale, ChangePlanet};
+	public enum LinkFunction {PlanetScale, ChangePlanet, OrbitingSpeed, RotationSpeed};
 
 	//public
 	public GameObject vButtonObj; 
@@ -81,7 +81,7 @@ public class PG_Switch : MonoBehaviour {
 		{
 			//when scaling planets
 			case LinkFunction.PlanetScale: 
-				vLinkObj.GetComponent<PG_Planet> ().CallChangeScale ();
+			vLinkObj.GetComponent<Planet> ().CallChangeScale ();
 			break;
 
 			//when scaling planets
@@ -89,15 +89,15 @@ public class PG_Switch : MonoBehaviour {
 				if (!vSwitchStatus) {
 
 					//create temp list
-					List<PG_Character> vCharList = new List<PG_Character> ();
+				List<PlayerController> vCharList = new List<PlayerController> ();
 					List<PG_Gravity> vGravList = new List<PG_Gravity> ();
 
 					//get all character & gravity objects and change their gravity planet.
 					foreach (Transform child in transform.parent) {
 				
-						//PG_Character
-						if ((child.tag == "Enemy" || child.tag == "Player") && child.GetComponent<PG_Character> ())
-							vCharList.Add (child.GetComponent<PG_Character> ());
+						//PlayerController
+						if ((child.tag == "Enemy" || child.tag == "Player") && child.GetComponent<PlayerController> ())
+							vCharList.Add (child.GetComponent<PlayerController> ());
 
 						//PG_Gravity
 						if (child.GetComponent<PG_Gravity> ())
@@ -105,11 +105,22 @@ public class PG_Switch : MonoBehaviour {
 					}
 
 					//then change all the character & Items planets gravity
-					foreach (PG_Character vCurChar in vCharList)
+					foreach (PlayerController vCurChar in vCharList)
 						vCurChar.ChangeCurPlanet (vLinkObj);
 					foreach (PG_Gravity vCurGravity in vGravList)
 						vCurGravity.ChangeCurPlanet (vLinkObj);
 				}
+
+				break;
+			//when speed up orbiting
+			case LinkFunction.OrbitingSpeed:
+				vLinkObj.GetComponent<Planet> ().CallChangeOrbitingSpeed ();
+
+			break;
+			//when speed up rotation
+			case LinkFunction.RotationSpeed:
+				vLinkObj.GetComponent<Planet> ().CallChangeRotateSpeed ();
+
 			break;
 
 		}
