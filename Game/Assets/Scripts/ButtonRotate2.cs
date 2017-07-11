@@ -6,7 +6,8 @@ public class ButtonRotate2 : MonoBehaviour {
 
 	public bool isOn = false;
 	public Planet planet;
-
+	public AudioClip vClickSound;
+	private AudioSource vAudioSource;
 	public float delaytime = 2.0f;
 	public float rotateSpeed = 20f;
 	public GameObject vButtonObj; 
@@ -14,7 +15,16 @@ public class ButtonRotate2 : MonoBehaviour {
 	private Vector3 vTargetPosition;
 	public SpriteRenderer vLightRenderer;
 	// Use this for initialization
+	public void PlaySound (AudioClip vClip)
+	{
+		if (vAudioSource != null)
+		{
+			vAudioSource.clip = vClip;
+			vAudioSource.Play ();
+		}
+	}
 	void Start () {
+		vAudioSource = GetComponent<AudioSource> ();
 		planet.vRotate = false;
 		planet.vRotateSpeed = rotateSpeed;
 		if (vButtonObj != null) {
@@ -44,6 +54,7 @@ public class ButtonRotate2 : MonoBehaviour {
 			planet.vRotate = true;
 			vLightRenderer.enabled = false;
 			isOn = true;
+			PlaySound(vClickSound);
 			vButtonObj.transform.localPosition = vOriginalPosition + (Vector3.down*0.1f);
 			StartCoroutine(DelayToInvoke.DelayToInvokeDo(() =>
 				{

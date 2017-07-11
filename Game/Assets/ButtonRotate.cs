@@ -5,6 +5,9 @@ using UnityEngine;
 public class ButtonRotate : MonoBehaviour {
 
 	public bool isOn = false;
+	public AudioClip vClickSound;
+	public AudioClip unClickSound;
+	private AudioSource vAudioSource;
 	public Planet planet;
 
 	public GameObject vButtonObj; 
@@ -16,7 +19,7 @@ public class ButtonRotate : MonoBehaviour {
 
 
 		planet.vRotate = false;
-
+		vAudioSource = GetComponent<AudioSource> ();
 		vNearbyPlayer = new List<GameObject> ();
 		if (vButtonObj != null) {
 
@@ -51,15 +54,24 @@ public class ButtonRotate : MonoBehaviour {
 			//add the player
 			vNearbyPlayer.Add (col.gameObject);
 			isOn = true;
+			PlaySound(vClickSound);
 		}
 	}
-
+	public void PlaySound (AudioClip vClip)
+	{
+		if (vAudioSource != null)
+		{
+			vAudioSource.clip = vClip;
+			vAudioSource.Play ();
+		}
+	}
 	void OnTriggerExit2D(Collider2D col)
 	{
 		//remove the gameobject
 		if (vNearbyPlayer.Contains (col.gameObject)) {
 			vNearbyPlayer.Remove (col.gameObject);
 			isOn = false;
+			PlaySound(unClickSound);
 		}
 	}
 
