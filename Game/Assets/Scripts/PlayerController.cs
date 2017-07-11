@@ -608,7 +608,7 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-        if (col.CompareTag("Bazooka")){
+        if (col.tag == "Bazooka"){
 			canfire = false;
             vCanUseWeapon = true;
             Destroy(col.gameObject);
@@ -619,7 +619,7 @@ public class PlayerController : MonoBehaviour {
 			findTarget = true;
 		}
 
-		if (IsPlayer && col.CompareTag ("JetCraftItem")) {
+		if (IsPlayer && col.tag == "JetCraftItem") {
 			transform.position += transform.up * jetPos;
 			currentAmount = 0;
 			Destroy (col.gameObject);
@@ -638,7 +638,9 @@ public class PlayerController : MonoBehaviour {
 			vCurPlanet = col.gameObject;
 			transform.parent = vCurPlanet.transform;
 		}
-
+		if (col.tag == "DynamicParticle") {
+			Damage (20);
+		}
         //triggers when colide with a gameobject
         if (col.tag == "GravityField")
         {
@@ -669,13 +671,13 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D collision) {
-		//triggers when two rigidbody object collide
-		if (collision.collider.gameObject.layer == LayerMask.NameToLayer ("Enemy") && gameObject.tag == "Player" ){
-			isDead = true;
-		}
-	}
-
+//	void OnCollisionEnter2D(Collision2D collision) {
+//		//triggers when two rigidbody object collide
+//		if (collision.tag == "DynamicParticle" && gameObject.tag == "Player" ){
+//			Damage (20);
+//		}
+//	}
+//
 
     void UpdateCharacterAnimation()
     {

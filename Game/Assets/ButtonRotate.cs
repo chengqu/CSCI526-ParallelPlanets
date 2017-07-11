@@ -43,22 +43,24 @@ public class ButtonRotate : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter2D(Collider2D col)
+	void OnTriggerStay2D(Collider2D col)
 	{
 //		
 		//CANNOT click AGAIN on the button until the player leave the button.
-		if (col.tag == "Player" && !vNearbyPlayer.Contains(col.gameObject)) {
+		if ((col.tag == "Player" || col.tag == "Pushable" ) && !vNearbyPlayer.Contains(col.gameObject)) {
 			//add the player
 			vNearbyPlayer.Add (col.gameObject);
-			isOn = !isOn;
+			isOn = true;
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D col)
 	{
 		//remove the gameobject
-		if (vNearbyPlayer.Contains(col.gameObject))
+		if (vNearbyPlayer.Contains (col.gameObject)) {
 			vNearbyPlayer.Remove (col.gameObject);
+			isOn = false;
+		}
 	}
 
 }

@@ -126,6 +126,7 @@ public class PG_TeleportField : MonoBehaviour {
 			yield return StartCoroutine (TeleportEffectOnPlayer ("WarpOut", vObj));
 
 			//re-enable all these components if exist
+			if (vObj != null)
 			ToggleComponentsObj (vObj, true);
 		}
 	}
@@ -139,28 +140,28 @@ public class PG_TeleportField : MonoBehaviour {
 		int vcptMax = 6;
 		int vcpt = 0;
 
-		if (vObj != null)
-		//check if the player warp in or warp out
-		if (vChoice == "WarpIn") { //WarpIn
-			while (vcpt < vcptMax) 
-			{
-				vcpt++;
-				if (vIsScaling)
-					vObj.transform.localScale -= new Vector3(0.15f, -0.15f, 0f); //decrease X, but increase Y
-				yield return null;
-			}
-		} else { //Warp Out
-			while (vcpt < vcptMax) 
-			{
-				vcpt++;
-				if (vIsScaling)
-					vObj.transform.localScale -= new Vector3(-0.15f, 0.15f, 0f); //decrease X, but increase Y
-				yield return null;
-			}
+		if (vObj != null) {
+			//check if the player warp in or warp out
+			if (vObj != null && vChoice == "WarpIn") { //WarpIn
+				while (vObj != null && vcpt < vcptMax) {
+					vcpt++;
+					if (vIsScaling)
+						vObj.transform.localScale -= new Vector3 (0.15f, -0.15f, 0f); //decrease X, but increase Y
+					yield return null;
+				}
+			} else if (vObj != null) { //Warp Out
+				while (vObj != null && vcpt < vcptMax) {
+					vcpt++;
+					if (vIsScaling)
+						vObj.transform.localScale -= new Vector3 (-0.15f, 0.15f, 0f); //decrease X, but increase Y
+					yield return null;
+				}
 
-			//go back to it's original 
-			vObj.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+				//go back to it's original 
+				if (vObj != null)
+					vObj.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 			
+			}
 		}
 	}
 
@@ -172,7 +173,7 @@ public class PG_TeleportField : MonoBehaviour {
 		if (((vObj.tag == "Player" || vObj.tag == "Enemy") && vObj.GetComponent<PlayerController>().vCanMove) 
 			|| (vObj.tag == "Projectile" && vObj.GetComponent<PG_Projectile>().vCanMove)
 			|| (vObj.tag == "Object" && vObj.GetComponent<PG_Object>().vCanMove) || 
-			(vObj.tag == "fire" && vObj.GetComponent<ParticleObject>().vCanMove)) {
+			(vObj.tag == "DynamicParticle")) {
 			vCanBeTeleported = true;
 		}
 
