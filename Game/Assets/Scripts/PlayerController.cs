@@ -225,11 +225,6 @@ public class PlayerController : MonoBehaviour {
 			if (CnInputManager.GetButtonDown ("Fire1")) {
 				vCanUseWeapon = false;
 				canfire = true;
-				if (WalkingDirection == PG_Direction.Right) {
-					Vector3 theScale = vWeaponObj.transform.localScale;
-					theScale.x *= -1;
-					vWeaponObj.transform.localScale = theScale;
-				}
 			}
 		}
 		if (JetCraft) {
@@ -306,11 +301,13 @@ public class PlayerController : MonoBehaviour {
 
 						vNewProj.transform.rotation = vWeaponObj.transform.rotation;
 						vNewProj.transform.localScale = transform.localScale;
+					vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
 						vProj.ProjectileIsReady ();
-						StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
 						canfire = false;
 						vWeaponObj.SetActive (false);
-						}, 1.0f));
+						StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
+						Destroy(vProj);
+						}, 10.0f));
 					}
 
 				}
@@ -344,7 +341,7 @@ public class PlayerController : MonoBehaviour {
 					//change rotation of the weapon
 					if (vWeaponObj != null) {
 						Quaternion vNewRotation = vWeaponObj.transform.localRotation;
-						if (WalkingDirection == PG_Direction.Right)
+						if (WalkingDirection == PG_Direction.Left)
 							vWeaponRenderer.flipX = true;
 						else
 							vWeaponRenderer.flipX = false;
@@ -584,34 +581,10 @@ public class PlayerController : MonoBehaviour {
 
         //change its rotation by default to look forward.
         vWeaponObj.transform.localRotation = vStartingRotation;
-		vWeaponRenderer.flipX = true;
+
+		//set the weapon scale to normal
+		vWeaponObj.transform.localScale = new Vector3(2f,2f,2f);
     }
-
-    //check if we rotate or not
-    bool CanRotate(float angle)
-    {
-        bool vCanRotate = false;
-
-        if (!WeaponList[CurrentWeaponIndex].UseGravity)
-        {
-
-            //get the player rotation
-            angle = angle - transform.rotation.eulerAngles.z;
-
-            //make sure the calculated angle is in the 180f/-180f range.
-            if (angle < -180f)
-                angle += 360f;
-            if (angle > 180f)
-                angle -= 360f;
-
-            //cannot rotate gun behind character.
-            if (angle <= 85f && angle >= -85f)
-                vCanRotate = true;
-        }
-
-        return vCanRotate;
-    }
-
 
     void RotateObj(string vDirection)
 	{
