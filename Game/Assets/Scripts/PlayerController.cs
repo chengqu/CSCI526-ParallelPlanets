@@ -635,7 +635,8 @@ public class PlayerController : MonoBehaviour {
 			jetpack.SetActive (false);
 			JetCraft = false;
 			vJumpHeight = 1f;
-			CheckIfNearbyPlanet ();
+			vCurPlanet = col.gameObject;
+			transform.parent = vCurPlanet.transform;
 		}
 
         //triggers when colide with a gameobject
