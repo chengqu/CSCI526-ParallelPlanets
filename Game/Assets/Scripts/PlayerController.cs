@@ -301,9 +301,10 @@ public class PlayerController : MonoBehaviour {
 
 						vNewProj.transform.rotation = vWeaponObj.transform.rotation;
 						vNewProj.transform.localScale = transform.localScale;
+					vProj.transform.localScale = new Vector3 (1f, 1f, 1f);
 						vProj.ProjectileIsReady ();
-						//canfire = false;
-						//vWeaponObj.SetActive (false);
+						canfire = false;
+						vWeaponObj.SetActive (false);
 						StartCoroutine (DelayToInvoke.DelayToInvokeDo (() => {
 						Destroy(vProj);
 						}, 10.0f));
@@ -340,7 +341,7 @@ public class PlayerController : MonoBehaviour {
 					//change rotation of the weapon
 					if (vWeaponObj != null) {
 						Quaternion vNewRotation = vWeaponObj.transform.localRotation;
-						if (WalkingDirection == PG_Direction.Right)
+						if (WalkingDirection == PG_Direction.Left)
 							vWeaponRenderer.flipX = true;
 						else
 							vWeaponRenderer.flipX = false;
@@ -580,7 +581,9 @@ public class PlayerController : MonoBehaviour {
 
         //change its rotation by default to look forward.
         vWeaponObj.transform.localRotation = vStartingRotation;
-		vWeaponRenderer.flipX = true;
+
+		//set the weapon scale to normal
+		vWeaponObj.transform.localScale = new Vector3(2f,2f,2f);
     }
 
     void RotateObj(string vDirection)
