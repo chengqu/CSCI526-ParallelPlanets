@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject explosion;
     public GameObject panel;
    
-	private bool canfire;
+	public bool canfire;
 	public void Damage(float damage) {
 	//	hitSfx.Play ();
 		curHealth -= damage;
