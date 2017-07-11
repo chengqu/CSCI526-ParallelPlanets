@@ -321,13 +321,13 @@ public class PlayerController : MonoBehaviour {
 				pos = Vector3.zero;
 
 				//check if going RIGHT
-				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
+				if ((direction2.active && !direction4.active) && (IsPlayer && CnInputManager.GetAxis ("Horizontal") > 0) || (IsPlayer && Input.GetAxis ("Horizontal") > 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Right)) {
 					pos += Vector3.right * vWalkSpeed * Time.deltaTime;
 					WalkingDirection = PG_Direction.Right;
                 }
 
 				//check if going LEFT
-				if ((IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
+				if ((direction2.active && !direction4.active) && (IsPlayer && CnInputManager.GetAxis ("Horizontal") < 0) || (IsPlayer && Input.GetAxis ("Horizontal") < 0 && !Input.GetButtonUp ("Horizontal")) || (IsAutoWalking && WalkingDirection == PG_Direction.Left)) {
 					pos += Vector3.left * vWalkSpeed * Time.deltaTime;
 					WalkingDirection = PG_Direction.Left;
                 }
